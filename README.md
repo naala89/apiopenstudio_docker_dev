@@ -84,7 +84,7 @@ Edit ```.env```:
 * EMAIL_PASSWORD
     * The password for the amil container.
 
-Serve thw wiki locally (optional)
+Serve the wiki locally (optional)
 ---------------------------------
 
 Add the following line to ```/etc/hosts```:
@@ -100,7 +100,7 @@ Uncomment the wiki containers in ```docker-compose.yml```:
 * bookdown
 * wiki
 
-Serve thw phpdoc locally (optional)
+Serve the phpdoc locally (optional)
 -----------------------------------
 
 Add the following line to ```/etc/hosts```:
