@@ -111,7 +111,7 @@ Uncomment the following line from ```.env```
 
     PHPDOC_DOMAIN=phpdoc.apiopenstudio.local
 
-Uncomment the wiki containers in ```docker-compose.yml```:
+Uncomment the phpdoc containers in ```docker-compose.yml```:
 
 * phpdocumentor
 * phpdoc
@@ -136,3 +136,14 @@ Running the docker
 ### Stop
 
     docker-composer down
+
+Installation script
+-------------------
+
+Because the DB will not be available outside of the docker network,
+you will need to run the install script from within the API docker:
+
+    docker exec -it apiopenstudio-php /bin/bash
+    cd api/
+    ./includes/scripts/install.php
+    

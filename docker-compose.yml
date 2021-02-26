@@ -9,13 +9,12 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ${API_CODEBASE}/dbdata:/var/lib/mysql
+      - ./dbdata:/var/lib/mysql
     env_file:
       .env
     restart: always
     networks:
       - api_network
-
 
   # Reverse Proxy.
   nginx-proxy:
@@ -38,6 +37,8 @@ services:
       context: ./docker
       args:
         - WITH_XDEBUG=${WITH_XDEBUG}
+    links:
+      - db:mysql
     env_file:
       .env
     ports:
@@ -100,34 +101,34 @@ services:
     container_name: "${APP_NAME}-email"
     networks:
       - api_network
-    # ports:
-    #   - "25:25"
+    #ports:
+      #- "25:25"
     environment:
       # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
       # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
-      #   - RELAY_NETWORKS= :192.168.0.0/24
+      #- RELAY_NETWORKS= :192.168.0.0/24
       # what domains should be accepted to forward to lower distance MX server.
-      #   - RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
+      #- RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
       # To act as a Gmail relay
       - GMAIL_USER=${EMAIL_USERNAME}
       - GMAIL_PASSWORD=${EMAIL_PASSWORD}
-        # For use with Amazon SES relay
-        #   - SES_USER=
-        #   - SES_PASSWORD=
-        #   - SES_REGION=
-        # if provided will enable TLS support
-        #   - KEY_PATH=certs/apiopenstudio.local
-        #   - CERTIFICATE_PATH=certs/apiopenstudio.local.crt
-        # the outgoing mail hostname
-        #   - MAILNAME=admin.apiopenstudio.local
-        # set this to any value to disable ipv6
-        #   - DISABLE_IPV6=
-        # Generic SMTP Relay
-        #   - SMARTHOST_ADDRESS=
-        #   - SMARTHOST_PORT=
-        #   - SMARTHOST_USER=
-        #   - SMARTHOST_PASSWORD=
-        #   - SMARTHOST_ALIASES=
+      # For use with Amazon SES relay
+      #- SES_USER=
+      #- SES_PASSWORD=
+      #- SES_REGION=
+      # if provided will enable TLS support
+      #- KEY_PATH=certs/apiopenstudio.local
+      #- CERTIFICATE_PATH=certs/apiopenstudio.local.crt
+      # the outgoing mail hostname
+      #- MAILNAME=admin.apiopenstudio.local
+      # set this to any value to disable ipv6
+      #- DISABLE_IPV6=
+      # Generic SMTP Relay
+      #- SMARTHOST_ADDRESS=
+      #- SMARTHOST_PORT=
+      #- SMARTHOST_USER=
+      #- SMARTHOST_PASSWORD=
+      #- SMARTHOST_ALIASES=
 
 #  # Uncomment this for compiling and serving the wiki.
 #  # Bookdown container.
@@ -137,7 +138,7 @@ services:
 #    volumes:
 #      - ${API_CODEBASE}/includes/wiki:/app
 #      - ${API_CODEBASE}/public/wiki:/wiki
-#    command: ["bookdown.json"]
+#    command: [ "bookdown.json" ]
 #    networks:
 #      - api_network
 #  # NGINX Wiki server.
