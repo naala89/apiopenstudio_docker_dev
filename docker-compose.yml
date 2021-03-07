@@ -95,6 +95,17 @@ services:
         aliases:
           - ${ADMIN_DOMAIN}
 
+  # Node container
+  node:
+    image: node:latest
+    container_name: "${APP_NAME}-node"
+    volumes:
+      - ${ADMIN_CODEBASE}:/usr/src/service
+    working_dir: /usr/src/service
+    command: bash -c "npm install && npm install -g gulp && gulp"
+    networks:
+      - api_network
+
   # Email container.
   email:
     image: namshi/smtp:latest
