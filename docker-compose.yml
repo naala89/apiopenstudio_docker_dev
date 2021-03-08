@@ -16,6 +16,30 @@ services:
     networks:
       - api_network
 
+  # Install composer requires.
+  composer:
+    image: composer:latest
+    container_name: "${APP_NAME}-composer"
+    ports:
+      - "9001:9000"
+    volumes:
+      - ${ADMIN_CODEBASE}:/app/admin
+      - ${API_CODEBASE}:/app/api
+    command:  bash -c "cd api && composer install && cd ../admin && composer install"
+    networks:
+      - api_network
+
+  # Node container
+  node:
+    image: node:latest
+    container_name: "${APP_NAME}-node"
+    volumes:
+      - ${ADMIN_CODEBASE}:/usr/src/service
+    working_dir: /usr/src/service
+    command: bash -c "npm install && npm install -g gulp && gulp"
+    networks:
+      - api_network
+
   # Reverse Proxy.
   nginx-proxy:
     image: jwilder/nginx-proxy:alpine
@@ -94,17 +118,6 @@ services:
       api_network:
         aliases:
           - ${ADMIN_DOMAIN}
-
-  # Node container
-  node:
-    image: node:latest
-    container_name: "${APP_NAME}-node"
-    volumes:
-      - ${ADMIN_CODEBASE}:/usr/src/service
-    working_dir: /usr/src/service
-    command: bash -c "npm install && npm install -g gulp && gulp"
-    networks:
-      - api_network
 
   # Email container.
   email:
@@ -188,7 +201,7 @@ services:
 #    ports:
 #      - 80
 #    volumes:
-#      - ${API_CODEBASE}/public/phpdoc/html:/var/www/html
+#      - ${API_CODEBASE}/public/phpdoc:/var/www/html
 #      - ./docker/phpdoc.conf:/etc/nginx/conf.d/default.conf
 #      - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
 #    environment:
