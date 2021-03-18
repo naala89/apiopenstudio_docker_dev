@@ -154,7 +154,7 @@ services:
       #- SMARTHOST_PASSWORD=
       #- SMARTHOST_ALIASES=
 
-#  # Uncomment this for compiling and serving the wiki.
+#  # Uncomment this for serving the wiki.
 #  # Bookdown container.
 #  bookdown:
 #    image: sandrokeil/bookdown
@@ -162,6 +162,10 @@ services:
 #    volumes:
 #      - ${API_CODEBASE}/includes/wiki:/app
 #      - ${API_CODEBASE}/public/wiki:/wiki
+#    environment:
+#      - CSS_BOOTSWATCH=spacelab
+#      - CSS_PRISM=prism
+#      - MENU_LOGO=/img/api_open_studio_logo_name_colour.png
 #    command: [ "bookdown.json" ]
 #    networks:
 #      - api_network
@@ -184,7 +188,8 @@ services:
 #          - ${WIKI_DOMAIN}
 
 #  # Uncomment this for compiling and serving the phpdoc API.
-#  # PhpDocumentor container.
+#  # PhpDoc container.
+#  # This will save headaches with setting up phpdocumentor requirements on your host!
 #  phpdocumentor:
 #    image: phpdoc/phpdoc
 #    container_name: "${APP_NAME}-phpdocumentor"
