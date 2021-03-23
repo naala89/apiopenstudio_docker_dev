@@ -1,5 +1,5 @@
-v1.0.0
-======
+ApiOpenStudio Docker v1.0.0
+===========================
 
 - Shared PHP container.
 - Container to maintain a persistent DB.
@@ -14,3 +14,6 @@ v1.0.0
 - Container to install the Composer dependencies.
 - Container to install the npm dependencies and run gulp.
 - Container for email configuration.
+- Code mounted into a volume to allow live development.
+- Mount the logs into the hosting environment.
+- Persistent DB.
