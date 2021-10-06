@@ -55,7 +55,6 @@ services:
 
   # Generic PHP container.
   php:
-    image: php:7-fpm
     container_name: "${APP_NAME}-php"
     build:
       context: ./docker
@@ -157,16 +156,15 @@ services:
 #  # Uncomment this for serving the wiki.
 #  # Bookdown container.
 #  bookdown:
-#    image: sandrokeil/bookdown
+#    image: naala89/bookdown-rsync:latest
 #    container_name: "${APP_NAME}-bookdown"
 #    volumes:
-#      - ${API_CODEBASE}/includes/wiki:/app
-#      - ${API_CODEBASE}/public/wiki:/wiki
+#      - ${API_CODEBASE}:/app
 #    environment:
 #      - CSS_BOOTSWATCH=spacelab
 #      - CSS_PRISM=prism
 #      - MENU_LOGO=/img/api_open_studio_logo_name_colour.png
-#    command: [ "bookdown.json" ]
+#    command: [ "includes/wiki/bookdown.json" ]
 #    networks:
 #      - api_network
 #  # NGINX Wiki server.
@@ -189,13 +187,13 @@ services:
 
 #  # Uncomment this for compiling and serving the phpdoc API.
 #  # PhpDoc container.
-#  # This will save headaches with setting up phpdocumentor requirements on your host!
 #  phpdocumentor:
-#    image: phpdoc/phpdoc
+#    image: naala89/phpdoc-rsync:latest
 #    container_name: "${APP_NAME}-phpdocumentor"
 #    volumes:
 #      - ${API_CODEBASE}:/data
-#    command: "run -d ./ -t public/phpdoc --ignore vendor/,tests/"
+#    command:
+#      "run -d ./ -t ./public/phpdoc/ --title='ApiOpenStudio PHPDoc'"
 #    networks:
 #      - api_network
 #  # NGINX PHPDoc server.

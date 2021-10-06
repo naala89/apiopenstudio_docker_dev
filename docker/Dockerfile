@@ -4,7 +4,7 @@ ARG BUILD_WITH_XDEBUG=false
 ENV WITH_XDEBUG=$BUILD_WITH_XDEBUG
 
 RUN apt-get update \
-    && apt-get install -y iputils-ping \
+    && apt-get install -y iputils-ping openssh-client php7-iconv \
     && docker-php-ext-install mysqli \
     && docker-php-ext-enable mysqli;
 
