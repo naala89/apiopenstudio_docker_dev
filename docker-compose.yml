@@ -31,7 +31,7 @@ services:
 
   # Node container
   node:
-    image: node:latest
+    image: node:13
     container_name: "${APP_NAME}-node"
     volumes:
       - ${ADMIN_CODEBASE}:/usr/src/service
@@ -58,6 +58,8 @@ services:
     container_name: "${APP_NAME}-php"
     build:
       context: ./docker
+#      dockerfile: Dockerfile-8
+      dockerfile: Dockerfile-7
       args:
         - WITH_XDEBUG=${WITH_XDEBUG}
     links:
