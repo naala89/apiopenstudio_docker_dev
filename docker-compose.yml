@@ -16,30 +16,6 @@ services:
     networks:
       - api_network
 
-  # Install composer requires.
-  composer:
-    image: composer:latest
-    container_name: "${APP_NAME}-composer"
-    ports:
-      - "9001:9000"
-    volumes:
-      - ${ADMIN_CODEBASE}:/app/admin
-      - ${API_CODEBASE}:/app/api
-    command:  bash -c "cd api && composer install && cd ../admin && composer install"
-    networks:
-      - api_network
-
-  # Node container
-  node:
-    image: node:13
-    container_name: "${APP_NAME}-node"
-    volumes:
-      - ${ADMIN_CODEBASE}:/usr/src/service
-    working_dir: /usr/src/service
-    command: bash -c "npm install && npm install -g gulp && gulp"
-    networks:
-      - api_network
-
   # Reverse Proxy.
   nginx-proxy:
     image: jwilder/nginx-proxy:alpine
@@ -58,8 +34,7 @@ services:
     container_name: "${APP_NAME}-php"
     build:
       context: ./docker
-#      dockerfile: Dockerfile-8
-      dockerfile: Dockerfile-7
+      dockerfile: "Dockerfile-${PHP_VERSION}"
       args:
         - WITH_XDEBUG=${WITH_XDEBUG}
     links:
@@ -98,6 +73,65 @@ services:
         aliases:
           - ${API_DOMAIN}
 
+  # Install composer requires.
+  composer:
+    image: composer:latest
+    container_name: "${APP_NAME}-composer"
+    ports:
+      - "9001:9000"
+    volumes:
+      - ${ADMIN_CODEBASE}:/app/admin
+      - ${API_CODEBASE}:/app/api
+    command:  bash -c "cd api && composer install && cd ../admin && composer install"
+    networks:
+      - api_network
+
+  # Node container
+  node:
+    image: node:13
+    container_name: "${APP_NAME}-node"
+    volumes:
+      - ${ADMIN_CODEBASE}:/usr/src/service
+    working_dir: /usr/src/service
+    command: bash -c "npm install && npm install -g gulp && gulp"
+    networks:
+      - api_network
+
+#  # Email container.
+#  email:
+#    image: namshi/smtp:latest
+#    container_name: "${APP_NAME}-email"
+#    networks:
+#      - api_network
+#    #ports:
+#      #- "25:25"
+#    environment:
+#      # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
+#      # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
+#      #- RELAY_NETWORKS= :192.168.0.0/24
+#      # what domains should be accepted to forward to lower distance MX server.
+#      #- RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
+#      # To act as a Gmail relay
+#      - GMAIL_USER=${EMAIL_USERNAME}
+#      - GMAIL_PASSWORD=${EMAIL_PASSWORD}
+#      # For use with Amazon SES relay
+#      #- SES_USER=
+#      #- SES_PASSWORD=
+#      #- SES_REGION=
+#      # if provided will enable TLS support
+#      #- KEY_PATH=certs/apiopenstudio.local
+#      #- CERTIFICATE_PATH=certs/apiopenstudio.local.crt
+#      # the outgoing mail hostname
+#      #- MAILNAME=admin.apiopenstudio.local
+#      # set this to any value to disable ipv6
+#      #- DISABLE_IPV6=
+#      # Generic SMTP Relay
+#      #- SMARTHOST_ADDRESS=
+#      #- SMARTHOST_PORT=
+#      #- SMARTHOST_USER=
+#      #- SMARTHOST_PASSWORD=
+#      #- SMARTHOST_ALIASES=
+
   # NGINX Admin server.
   admin:
     image: nginx:stable
@@ -120,41 +154,6 @@ services:
         aliases:
           - ${ADMIN_DOMAIN}
 
-  # Email container.
-  email:
-    image: namshi/smtp:latest
-    container_name: "${APP_NAME}-email"
-    networks:
-      - api_network
-    #ports:
-      #- "25:25"
-    environment:
-      # MUST start with : e.g RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
-      # if acting as a relay this or RELAY_DOMAINS must be filled out or incoming mail will be rejected
-      #- RELAY_NETWORKS= :192.168.0.0/24
-      # what domains should be accepted to forward to lower distance MX server.
-      #- RELAY_DOMAINS= <domain1> : <domain2> : <domain3>
-      # To act as a Gmail relay
-      - GMAIL_USER=${EMAIL_USERNAME}
-      - GMAIL_PASSWORD=${EMAIL_PASSWORD}
-      # For use with Amazon SES relay
-      #- SES_USER=
-      #- SES_PASSWORD=
-      #- SES_REGION=
-      # if provided will enable TLS support
-      #- KEY_PATH=certs/apiopenstudio.local
-      #- CERTIFICATE_PATH=certs/apiopenstudio.local.crt
-      # the outgoing mail hostname
-      #- MAILNAME=admin.apiopenstudio.local
-      # set this to any value to disable ipv6
-      #- DISABLE_IPV6=
-      # Generic SMTP Relay
-      #- SMARTHOST_ADDRESS=
-      #- SMARTHOST_PORT=
-      #- SMARTHOST_USER=
-      #- SMARTHOST_PASSWORD=
-      #- SMARTHOST_ALIASES=
-
 #  # Uncomment this for serving the wiki.
 #  # Bookdown container.
 #  bookdown:
@@ -169,6 +168,7 @@ services:
 #    command: [ "includes/wiki/bookdown.json" ]
 #    networks:
 #      - api_network
+#
 #  # NGINX Wiki server.
 #  wiki:
 #    image: nginx:stable
@@ -195,9 +195,10 @@ services:
 #    volumes:
 #      - ${API_CODEBASE}:/data
 #    command:
-#      "run -d ./ -t ./public/phpdoc/ --title='ApiOpenStudio PHPDoc'"
+#      "run -d ./ -t ./public/phpdoc/ --title='PHPDoc'"
 #    networks:
 #      - api_network
+#
 #  # NGINX PHPDoc server.
 #  phpdoc:
 #    image: nginx:stable
