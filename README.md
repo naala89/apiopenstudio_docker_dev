@@ -55,8 +55,10 @@ Edit ```.env```:
 
 * APP_NAME
     * The name of you application.
+* PHP_VERSION (7.4, 8.0, 8.1)
+  * Select the PHP version for the server.
 * WITH_XDEBUG (true / false)
-    * Build the PHP container with xdebug enabled.
+  * Build the PHP container with xdebug enabled.
 * API_CODEBASE
     * Full path to the API code on your host machine,
       e.g. ```/my/development/directory/api_open_studio```.
@@ -146,4 +148,3 @@ you will need to run the install script from within the API docker:
     docker exec -it apiopenstudio-php /bin/bash
     cd api/
     ./includes/scripts/install.php
-    
