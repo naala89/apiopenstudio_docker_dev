@@ -1,7 +1,7 @@
 FROM php:8.0-fpm
 
-ARG BUILD_WITH_XDEBUG=false
-ENV WITH_XDEBUG=$BUILD_WITH_XDEBUG
+ARG WITH_XDEBUG=false
+ENV WITH_XDEBUG=$WITH_XDEBUG
 
 RUN apt-get update
 RUN apt-get install -y iputils-ping
@@ -11,13 +11,12 @@ RUN docker-php-ext-enable mysqli
 #RUN apt-get install -y php8-common
 RUN docker-php-ext-install iconv
 
+COPY ./* /throwaway/
+
 RUN if [ "${WITH_XDEBUG}" = "true" ] ; then \
-    echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.remote_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.remote_log=/var/log/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-        && echo "xdebug.remote_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    pecl install xdebug && docker-php-ext-enable xdebug; \
+    cp /throwaway/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    cp /throwaway/error_reporting.ini /usr/local/etc/php/conf.d/error_reporting.ini; \
 fi ;
+
+RUN rm -Rf /throwaway
