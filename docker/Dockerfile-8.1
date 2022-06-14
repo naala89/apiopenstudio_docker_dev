@@ -3,13 +3,11 @@ FROM php:8.1-fpm
 ARG WITH_XDEBUG=false
 ENV WITH_XDEBUG=$WITH_XDEBUG
 
-RUN apt-get update
-RUN apt-get install -y iputils-ping
-RUN apt-get install -y openssh-client
-RUN docker-php-ext-install mysqli
-RUN docker-php-ext-enable mysqli
-#RUN apt-get install -y php8-common
-RUN docker-php-ext-install iconv
+RUN apt-get update \
+    && apt-get install -y iputils-ping openssh-client \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-enable mysqli \
+    && docker-php-ext-install iconv
 
 COPY ./* /throwaway/
 
