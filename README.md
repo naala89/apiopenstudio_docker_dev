@@ -57,6 +57,8 @@ Edit ```.env```:
     * The name of you application.
 * PHP_VERSION (7.4, 8.0, 8.1)
   * Select the PHP version for the server.
+  * **NOTE**: if using PHP 7.4, ensure you are using the correct composer image in
+    `docker-compose.yml`: `composer:2.0.8`
 * WITH_XDEBUG (true / false)
   * Build the PHP container with xdebug enabled.
 * API_CODEBASE
