@@ -60,7 +60,11 @@ Edit ```.env```:
   * **NOTE**: if using PHP 7.4, ensure you are using the correct composer image in
     `docker-compose.yml`: `composer:2.0.8`
 * WITH_XDEBUG (true / false)
-  * Build the PHP container with xdebug enabled.
+  * Build the PHP container with xDebug enabled.
+* WITH_MEMCACHED (true / false)
+  * Build the PHP container with Memcached enabled.
+* WITH_REDIS (true / false)
+  * Build the PHP container with Redis enabled.
 * API_CODEBASE
     * Full path to the API code on your host machine,
       e.g. ```/my/development/directory/api_open_studio```.
@@ -83,10 +87,6 @@ Edit ```.env```:
     * The database user.
 * MYSQL_PASSWORD
     * The password for the database user.
-* EMAIL_USERNAME
-    * The username for the amil container.
-* EMAIL_PASSWORD
-    * The password for the amil container.
 
 Serve the wiki locally (optional)
 ---------------------------------
@@ -140,6 +140,53 @@ Running the docker
 ### Stop
 
     docker-composer down
+
+FAQ
+---
+
+### I get `Your Composer dependencies require a PHP version ">= 8.1.0".`
+
+This usually occurs when you are running when the composer image is a mismatch
+for the PHP version you are using.
+
+#### PHP 7.4
+
+In `.env`:
+
+    PHP_VERSION=7.4
+
+In `docker-compose.yml` file:
+
+    composer:
+        image: composer:2.0.8
+
+#### PHP 8.0
+
+In `.env`:
+
+    PHP_VERSION=8.0
+
+In `docker-compose.yml` file:
+
+    composer:
+        image: composer:2.1.11
+
+#### PHP 8.1
+
+In `.env`:
+
+    PHP_VERSION=8.1
+
+In `docker-compose.yml` file:
+
+    composer:
+        image: composer:latest
+
+You will need to delete the `composer.lock` file and `vendor/` directory from
+your local ApiOpenStudio instance. and restart your containers with:
+
+    $ docker-compose down
+    $ docker-compose up --build
 
 Installation script
 -------------------
