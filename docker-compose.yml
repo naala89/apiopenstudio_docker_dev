@@ -145,39 +145,6 @@ services:
 #    networks:
 #      - api_network
 
-#  # Uncomment this for serving the wiki.
-#  # Bookdown container.
-#  bookdown:
-#    image: naala89/bookdown-rsync:latest
-#    container_name: "${APP_NAME}-bookdown"
-#    volumes:
-#      - ${API_CODEBASE}:/app
-#    environment:
-#      - CSS_BOOTSWATCH=spacelab
-#      - CSS_PRISM=prism
-#      - MENU_LOGO=/img/api_open_studio_logo_name_colour.png
-#    command: [ "includes/wiki/bookdown.json" ]
-#    networks:
-#      - api_network
-#
-#  # NGINX Wiki server.
-#  wiki:
-#    image: nginx:stable
-#    container_name: "${APP_NAME}-wiki"
-#    hostname: "${WIKI_DOMAIN}"
-#    ports:
-#      - 80
-#    volumes:
-#      - ${API_CODEBASE}/public/wiki:/var/www/html
-#      - ./docker/wiki.conf:/etc/nginx/conf.d/default.conf
-#      - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-#    environment:
-#      - VIRTUAL_HOST=${WIKI_DOMAIN}
-#    networks:
-#      api_network:
-#        aliases:
-#          - ${WIKI_DOMAIN}
-
 #  # Uncomment this for compiling and serving the phpdoc API.
 #  # PhpDoc container.
 #  phpdocumentor:
