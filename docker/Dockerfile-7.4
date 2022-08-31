@@ -9,7 +9,7 @@ ENV WITH_MEMCACHED=$WITH_MEMCACHED
 ENV WITH_REDIS=$WITH_REDIS
 
 RUN apt-get update \
-    && apt-get install -y iputils-ping openssh-client \
+    && apt-get install -y iputils-ping openssh-client git zip unzip \
     && docker-php-ext-install mysqli \
     && docker-php-ext-enable mysqli
 
