@@ -4,8 +4,8 @@ Docker setup for ApiOpenStudio
 This is a setup designed for developers local environments.
 It mounts to code inside the container volumes, 
 allowing the programmer to edit the code directly and immediately see the results.
-It is design to maintain a persistent database, provides an email container for full
-end-to-end testing, and optionally serves the wiki and phpdoc.
+It is designed to maintain a persistent database, provides an email container
+for full end-to-end testing, and optionally serves the phpdoc site.
 
 Note:
 
@@ -15,8 +15,8 @@ Note:
   (to re-run gulp) or run gulp on the host machine (admin codebase only).
   
 There are additional containers for node and composer, for convenience.
-This means you will not need to install ```composer```, ```node``` or ```npm```
-on the host machine.
+This means you will not need to install `composer`, `node` or `npm` on the host
+machine.
 
 Setup
 -----
@@ -24,8 +24,9 @@ Setup
 ### Clone the code bases
 
     cd /my/development/directory
-    git clone git@gitlab.com:john89/api_open_studio.git
-    git clone git@gitlab.com:john89/api_open_studio_admin.git
+    git clone git@gitlab.com:john89/apiopenstudio.git
+    git clone git@gitlab.com:john89/apiopenstudio_admin.git
+    git clone git@gitlab.com:john89/apiopenstudio_docker_dev.git
 
 ### Setup SSL certificates
 
@@ -33,7 +34,7 @@ Setup
 
     brew install mkcert nss
     mkcert -install
-    cd /my/development/directory/api_open_studio_docker
+    cd /my/development/directory/apiopenstudio_docker_dev
     mkdir certs
     cd certs
     mkcert -cert-file apiopenstudio.local.crt -key-file apiopenstudio.local.key "*.apiopenstudio.local"
@@ -41,8 +42,8 @@ Setup
 
 ### Set up the domains
 
-Configure the ```/etc/hosts``` for your domains.
-Add the following lines to your ```hosts``` file:
+Configure the `/etc/hosts` for your domains. Add the following lines to your
+`hosts` file:
 
     127.0.0.1      admin.apiopenstudio.local
     127.0.0.1      api.apiopenstudio.local
@@ -51,7 +52,7 @@ Add the following lines to your ```hosts``` file:
 
     cp example.env .env
 
-Edit ```.env```:
+Edit `.env`:
 
 * APP_NAME
     * The name of you application.
@@ -66,17 +67,15 @@ Edit ```.env```:
 * WITH_REDIS (true / false)
   * Build the PHP container with Redis enabled.
 * API_CODEBASE
-    * Full path to the API code on your host machine,
-      e.g. ```/my/development/directory/api_open_studio```.
+    * Full path to the API code on your host machine, e.g.
+      `/my/development/directory/apiopenstudio`.
 * API_DOMAIN
     * The domain of your API
 * ADMIN_CODEBASE
-    * Full path to the admin site code on your host machine,
-      e.g. ```/my/development/directory/api_open_studio_admin```.
+    * Full path to the admin site code on your host machine, e.g.
+      `/my/development/directory/apiopenstudio_admin`.
 * ADMIN_DOMAIN
     * The domain of your admin site.
-* WIKI_DOMAIN
-    * (optional) The domain of the wiki site if you want to host it.
 * PHPDOC_DOMAIN
     * (optional) The domain of the phpdoc site if you want to host it.
 * MYSQL_HOST
@@ -88,34 +87,18 @@ Edit ```.env```:
 * MYSQL_PASSWORD
     * The password for the database user.
 
-Serve the wiki locally (optional)
----------------------------------
-
-Add the following line to ```/etc/hosts```:
-
-    127.0.0.1      wiki.apiopenstudio.local
-
-Uncomment the following line from ```.env```
-
-    WIKI_DOMAIN=wiki.apiopenstudio.local
-
-Uncomment the wiki containers in ```docker-compose.yml```:
-
-* bookdown
-* wiki
-
 Serve the phpdoc locally (optional)
 -----------------------------------
 
-Add the following line to ```/etc/hosts```:
+Add the following line to `/etc/hosts`:
 
     127.0.0.1      phpdoc.apiopenstudio.local
 
-Uncomment the following line from ```.env```
+Uncomment the following line from `.env`
 
     PHPDOC_DOMAIN=phpdoc.apiopenstudio.local
 
-Uncomment the phpdoc containers in ```docker-compose.yml```:
+Uncomment the phpdoc containers in `docker-compose.yml`:
 
 * phpdocumentor
 * phpdoc
@@ -191,9 +174,9 @@ your local ApiOpenStudio instance. and restart your containers with:
 Installation script
 -------------------
 
-Because the DB will not be available outside of the docker network,
-you will need to run the install script from within the API docker:
+Because the DB will not be available outside the docker network, you will need
+to run the installation script from within the API docker:
 
     docker exec -it apiopenstudio-php /bin/bash
     cd api/
-    ./includes/scripts/install.php
+    ./bin/aos-install.php
