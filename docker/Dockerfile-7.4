@@ -32,4 +32,6 @@ RUN if [ "${WITH_XDEBUG}" = "true" ] ; then \
     cp /throwaway/error_reporting.ini /usr/local/etc/php/conf.d/error_reporting.ini; \
 fi ;
 
+RUN ln -s /usr/local/bin/php /usr/bin/php
+
 RUN rm -Rf /throwaway
