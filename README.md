@@ -1,11 +1,12 @@
 Docker setup for ApiOpenStudio
 ==============================
 
-This is a setup designed for developers local environments.
-It mounts to code inside the container volumes, 
-allowing the programmer to edit the code directly and immediately see the results.
-It is designed to maintain a persistent database, provides an email container
-for full end-to-end testing, and optionally serves the phpdoc site.
+This is a setup designed for developers local environments. It allows full
+access to the ApiOpenStudio Core and Admin code. It mounts to code inside the
+container volumes, allowing the programmer to edit the code directly and
+immediately see the results. It is designed to maintain a persistent database,
+provides an email container for full end-to-end testing, and optionally serves
+the phpdoc site.
 
 Note:
 
@@ -13,7 +14,7 @@ Note:
   you will need to re-run the dockers to compile them.
 * To see styling changes in admin, you will need to either re-run the containers
   (to re-run gulp) or run gulp on the host machine (admin codebase only).
-  
+
 There are additional containers for node and composer, for convenience.
 This means you will not need to install `composer`, `node` or `npm` on the host
 machine.
@@ -24,9 +25,9 @@ Setup
 ### Clone the code bases
 
     cd /my/development/directory
-    git clone git@gitlab.com:john89/apiopenstudio.git
-    git clone git@gitlab.com:john89/apiopenstudio_admin.git
-    git clone git@gitlab.com:john89/apiopenstudio_docker_dev.git
+    git clone git@github.com:naala89/apiopenstudio.git
+    git clone git@github.com:naala89/apiopenstudio_admin.git
+    git clone git@github.com:naala89/apiopenstudio_docker_dev.git
 
 ### Setup SSL certificates
 
@@ -57,15 +58,15 @@ Edit `.env`:
 * APP_NAME
     * The name of you application.
 * PHP_VERSION (7.4, 8.0, 8.1)
-  * Select the PHP version for the server.
-  * **NOTE**: if using PHP 7.4, ensure you are using the correct composer image in
-    `docker-compose.yml`: `composer:2.0.8`
+    * Select the PHP version for the server.
+    * **NOTE**: if using PHP 7.4, ensure you are using the correct composer image in
+      `docker-compose.yml`: `composer:2.0.8`
 * WITH_XDEBUG (true / false)
-  * Build the PHP container with xDebug enabled.
+    * Build the PHP container with xDebug enabled.
 * WITH_MEMCACHED (true / false)
-  * Build the PHP container with Memcached enabled.
+    * Build the PHP container with Memcached enabled.
 * WITH_REDIS (true / false)
-  * Build the PHP container with Redis enabled.
+    * Build the PHP container with Redis enabled.
 * API_CODEBASE
     * Full path to the API code on your host machine, e.g.
       `/my/development/directory/apiopenstudio`.
