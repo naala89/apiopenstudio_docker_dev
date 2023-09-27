@@ -1,5 +1,6 @@
 .idea/
 .env
 certs/
-logs/
+logs/*
+!logs/.gitkeep
 dbdata/
