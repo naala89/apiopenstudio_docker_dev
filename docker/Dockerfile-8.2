@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.2-fpm
 
 ARG WITH_XDEBUG=false
 ARG WITH_MEMCACHED=false
@@ -11,7 +11,8 @@ ENV WITH_REDIS=$WITH_REDIS
 RUN apt-get update \
     && apt-get install -y iputils-ping openssh-client git zip unzip \
     && docker-php-ext-install mysqli \
-    && docker-php-ext-enable mysqli
+    && docker-php-ext-enable mysqli \
+    && docker-php-ext-install iconv
 
 RUN if [ "${WITH_MEMCACHED}" = "true" ] ; then \
     apt-get install -y libz-dev libmemcached-dev \

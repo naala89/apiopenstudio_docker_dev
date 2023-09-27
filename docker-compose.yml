@@ -77,9 +77,9 @@ services:
 
   # Install composer requires.
   composer:
-    image: composer:latest # Use for PHP 8.1
-#    image: composer:2.1.11 # Use for PHP 8.0
-#    image: composer:2.0.8 # Use for PHP 7.4
+    #    image: composer:2.1.11 # Use for PHP 8.0
+    #    image: composer:2.4.3 # Use for PHP 8.1
+    image: composer:latest # Use for PHP 8.2
     container_name: "${APP_NAME}-composer"
     ports:
       - "9001:9000"
@@ -145,35 +145,35 @@ services:
 #    networks:
 #      - api_network
 
-#  # Uncomment this for compiling and serving the phpdoc API.
-#  # PhpDoc container.
-#  phpdocumentor:
-#    image: naala89/phpdoc-rsync:latest
-#    container_name: "${APP_NAME}-phpdocumentor"
-#    volumes:
-#      - ${API_CODEBASE}:/data
-#    command:
-#      "run -d ./ -t ./public/phpdoc/ --title='PHPDoc'"
-#    networks:
-#      - api_network
-#
-#  # NGINX PHPDoc server.
-#  phpdoc:
-#    image: nginx:stable
-#    container_name: "${APP_NAME}-phpdoc"
-#    hostname: "${PHPDOC_DOMAIN}"
-#    ports:
-#      - 80
-#    volumes:
-#      - ${API_CODEBASE}/public/phpdoc:/var/www/html
-#      - ./docker/phpdoc.conf:/etc/nginx/conf.d/default.conf
-#      - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
-#    environment:
-#      - VIRTUAL_HOST=${PHPDOC_DOMAIN}
-#    networks:
-#      api_network:
-#        aliases:
-#          - ${PHPDOC_DOMAIN}
+  # Uncomment this for compiling and serving the phpdoc API.
+  # PhpDoc container.
+  phpdocumentor:
+    image: naala89/phpdoc-rsync:latest
+    container_name: "${APP_NAME}-phpdocumentor"
+    volumes:
+      - ${API_CODEBASE}:/data
+    command:
+      "run -d ./ -t ./public/phpdoc/ --title='PHPDoc'"
+    networks:
+      - api_network
+
+  # NGINX PHPDoc server.
+  phpdoc:
+    image: nginx:stable
+    container_name: "${APP_NAME}-phpdoc"
+    hostname: "${PHPDOC_DOMAIN}"
+    ports:
+      - 80
+    volumes:
+      - ${API_CODEBASE}/public/phpdoc:/var/www/html
+      - ./docker/phpdoc.conf:/etc/nginx/conf.d/default.conf
+      - ./certs/ca.crt:/usr/local/share/ca-certificates/ca.crt
+    environment:
+      - VIRTUAL_HOST=${PHPDOC_DOMAIN}
+    networks:
+      api_network:
+        aliases:
+          - ${PHPDOC_DOMAIN}
 
 networks:
   api_network:
