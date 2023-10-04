@@ -9,7 +9,7 @@ ENV WITH_MEMCACHED=$WITH_MEMCACHED
 ENV WITH_REDIS=$WITH_REDIS
 
 RUN apt-get update \
-    && apt-get install -y iputils-ping openssh-client git zip unzip \
+    && apt-get install -y iputils-ping openssh-client git zip unzip mariadb-client vim \
     && docker-php-ext-install mysqli \
     && docker-php-ext-enable mysqli \
     && docker-php-ext-install iconv
@@ -25,10 +25,11 @@ RUN if [ "${WITH_REDIS}" = "true" ] ; then \
     pecl install redis && docker-php-ext-enable redis; \
 fi ;
 
-COPY ./* /throwaway/
+COPY ./config/php/* /throwaway/
 
 RUN if [ "${WITH_XDEBUG}" = "true" ] ; then \
     pecl install xdebug && docker-php-ext-enable xdebug; \
+    cp /throwaway/php.conf /usr/local/etc/php-fpm.d/zzz-phpSettings.conf; \
     cp /throwaway/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     cp /throwaway/error_reporting.ini /usr/local/etc/php/conf.d/error_reporting.ini; \
 fi ;
