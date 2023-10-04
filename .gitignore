@@ -1,6 +1,8 @@
 .idea/
 .env
-certs/
+config/certs/*
+!config/certs/.gitkeep
 logs/*
-!logs/.gitkeep
 dbdata/
+config/*/default
+config/proxy/dynamic.yml
