@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name phpdoc.apiopenstudio.local;
+    server_name PHPDOC_DOMAIN;
     index index.html;
     error_log /var/log/nginx/error.log debug;
     access_log /var/log/nginx/access.log;

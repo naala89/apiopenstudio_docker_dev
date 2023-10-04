@@ -1,12 +1,13 @@
 server {
     listen 80;
-    server_name api.apiopenstudio.local;
+    server_name API_DOMAIN;
     index index.php;
     error_log /var/log/nginx/error.log debug;
     access_log /var/log/nginx/access.log;
-    root /var/www/html/api/public;
+    root /var/www/html/public;
 
     location ~ ^/(?!(index.php)) {
+        add_header 'Access-Control-Allow-Origin' '*';
         rewrite ^/(.*)$ /index.php?request=$1 last;
     }
 

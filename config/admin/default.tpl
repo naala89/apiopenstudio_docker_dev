@@ -1,6 +1,6 @@
 server {
     listen      80;
-    server_name admin.apiopenstudio.local;
+    server_name ADMIN_DOMAIN;
     index       index.php;
     error_log   /var/log/nginx/error.log debug;
     access_log  /var/log/nginx/access.log;
