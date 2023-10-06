@@ -26,3 +26,9 @@ v1.0.1
 - Deprecated PHP7.4
 - Added PHP8.2
 - Minor fixes in example.env
+
+v1.0.1
+------
+
+- Implemented Traefik
+- Added makefile for ease of use
