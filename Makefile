@@ -19,6 +19,7 @@ install:
 	make proxy_config
 	make composer
 	make build
+	make yarn
 
 ## composer: Refresh the composer dependencies.
 ##		Command: make composer
@@ -27,10 +28,19 @@ composer:
 	if [ -f "$${API_CODEBASE}/composer.lock" ]; then\
 		rm "$${API_CODEBASE}/composer.lock";\
 	fi
-	if [ -d ""$${API_CODEBASE}/vendor"" ]; then\
-		rm -R ""$${API_CODEBASE}/vendor"";\
+	if [ -d "$${API_CODEBASE}/vendor" ]; then\
+		rm -R "$${API_CODEBASE}/vendor";\
 	fi
 	docker compose run --rm composer
+
+## yarn: Refresh the node dependencies.
+##		Command: make yarn
+.PHONY: yarn
+yarn:
+	if [ -d "$${ADMIN_CODEBASE}/node_module" ]; then\
+		rm -R "$${ADMIN_CODEBASE}/node_modules";\
+	fi
+	docker compose run --rm yarn
 
 ## up	: Build & spin up the docker containers.
 ##		Command: make up
@@ -55,6 +65,7 @@ stop:
 ##		Examples:
 ##		  	make logs php
 ##		  	make logs db
+##		  	make logs traefik
 ##		  	make logs api
 ##		  	make logs admin
 .PHONY: logs

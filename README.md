@@ -21,6 +21,32 @@ machine.
 
 # Setup
 
+## New install
+
+Clone the code bases
+
+    cd /my/development/directory
+    git clone git@gitlab.com:apiopenstudio/apiopenstudio.git
+    git clone git@gitlab.com:apiopenstudio/apiopenstudio_admin.git
+    git clone git@gitlab.com:apiopenstudio/apiopenstudio_docker_dev.git
+
+    cd apiopenstudio
+    cp example.docker-dev.settings.yml settings.yml
+
+    cd ../apiopenstudio_docker_dev
+    cp example.env .env
+
+Configure the `.env` file.
+
+    make install
+    make up
+    docker exec -it apiopenstudio-php bash
+    ./bin/aos-install
+
+add to `/etc/hosts`
+
+    127.0.0.1 apiopenstudio.local
+
 ## Clone the code bases
 
     cd /my/development/directory
@@ -37,8 +63,8 @@ machine.
     cd /my/development/directory/apiopenstudio_docker_dev
     mkdir certs
     cd certs
-    mkcert -cert-file apiopenstudio.local.crt -key-file apiopenstudio.local.key "\*.apiopenstudio.local"
-    cp "\$(mkcert -CAROOT)/rootCA.pem" ca.crt
+    mkcert -cert-file apiopenstudio.local.crt -key-file apiopenstudio.local.key "*.apiopenstudio.local"
+    cp "$(mkcert -CAROOT)/rootCA.pem" ca.crt
 
 ## Set up the domains
 
