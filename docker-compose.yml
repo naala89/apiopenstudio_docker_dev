@@ -2,6 +2,45 @@ version: '3.7'
 
 services:
 
+  # Node container
+  admin:
+    container_name: "${APP_NAME}-admin"
+    build:
+      context: .
+      dockerfile: "config/docker/Dockerfile-node"
+    labels:
+      - traefik.enable=false
+#      - traefik.docker.network=apiopenstudio_docker_dev_api_network
+#      - traefik.http.routers.admin.rule=Host(`${ADMIN_SUBDOMAIN}.${DOMAIN}`)
+#      - traefik.http.routers.admin.tls=true
+#      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=http
+    ports:
+      - "8081:8080"
+    volumes:
+      - ${ADMIN_CODEBASE}:/app:rw
+    networks:
+      - default
+
+  # NGINX API server.
+  api:
+    image: nginx:stable
+    container_name: "${APP_NAME}-api"
+    ports:
+      - "8082:80"
+    volumes:
+      - ./config/nginx/api.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${API_CODEBASE}:/var/www/html:rw
+    depends_on:
+      - php
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=apiopenstudio_docker_dev_api_network
+      - traefik.http.routers.api.rule=Host(`${API_SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.api.tls=true
+#      - traefik.http.services.api.loadbalancer.server.port=80
+    networks:
+      - default
+
   # Reverse Proxy.
   traefik:
     image: "traefik:${TRAEFIK_VERSION}"
@@ -12,16 +51,30 @@ services:
       - --providers.docker=true
       - --providers.file.directory=/etc/traefik/dynamic_conf
     ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/proxy/static.yml:/etc/traefik/traefik.yml:ro
       - ./config/proxy/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./config/certs:/etc/certs:ro
     networks:
-      - api_network
+      - default
+
+  # Install composer requires.
+  composer:
+    # image: composer:2.1.11 # Use for PHP 8.0
+    # image: composer:2.4.3 # Use for PHP 8.1
+    image: composer:latest # Use for PHP 8.2
+    container_name: "${APP_NAME}-composer"
+    ports:
+      - "9002:9000"
+    volumes:
+      - ${API_CODEBASE}:/app
+    command: bash -c "composer install"
+    networks:
+      - default
 
   # Database container.
   db:
@@ -30,12 +83,14 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./dbdata:/var/lib/mysql
+      - dbdata:/var/lib/mysql
     env_file:
       .env
     restart: always
+    labels:
+      - traefik.enable=false
     networks:
-      - api_network
+      - default
 
   # Generic PHP container.
   php:
@@ -50,91 +105,16 @@ services:
       - db:mysql
     env_file:
       .env
+    restart: always
+    labels:
+      - traefik.enable=false
     ports:
       - "9001:9000"
     volumes:
-      - ${API_CODEBASE}:/var/www/html
-      - ./logs/apiopenstudio:/var/log/apiopenstudio
+      - ${API_CODEBASE}:/var/www/html:rw
+      - ./logs/apiopenstudio:/var/log/apiopenstudio:rw
     networks:
-      - api_network
-
-  # NGINX API server.
-  api:
-    image: nginx:stable
-    container_name: "${APP_NAME}-api"
-    ports:
-      - "80"
-    volumes:
-      - ./config/nginx/api.conf:/etc/nginx/conf.d/default.conf
-      - ${API_CODEBASE}:/var/www/html
-    depends_on:
-      - php
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=api_network"
-      - "traefik.http.routers.nginx.rule=Host(`${API_SUBDOMAIN}.${DOMAIN}`)"
-      - "traefik.http.routers.nginx.tls=true"
-    networks:
-      - api_network
-
-  # Install composer requires.
-  composer:
-    # image: composer:2.1.11 # Use for PHP 8.0
-    # image: composer:2.4.3 # Use for PHP 8.1
-    image: composer:latest # Use for PHP 8.2
-    container_name: "${APP_NAME}-composer"
-    ports:
-      - "9002:9000"
-    volumes:
-      - ${API_CODEBASE}:/app
-    command:  bash -c "composer install"
-    networks:
-      - api_network
-
-  # Yarn container
-  yarn:
-    container_name: "${APP_NAME}-yarn"
-#    image: node
-    build:
-      context: .
-      dockerfile: "config/docker/Dockerfile-yarn"
-    volumes:
-      - ${ADMIN_CODEBASE}:/app
-    networks:
-      - api_network
-
-#  # Node container
-#  node:
-#    image: node:13
-#    container_name: "${APP_NAME}-node"
-#    volumes:
-#      - ${ADMIN_CODEBASE}:/usr/src/service
-#    working_dir: /usr/src/service
-#    command: bash -c "npm install && npm install -g gulp && gulp"
-#    networks:
-#      - api_network
-
-#  # NGINX Admin server.
-#  admin:
-#    image: nginx:stable
-#    container_name: "${APP_NAME}-admin"
-#    hostname: "${ADMIN_DOMAIN}"
-#    ports:
-#      - "80"
-#    volumes:
-#      - ./config/nginx/admin.conf:/etc/nginx/conf.d/default.conf
-#      - ${ADMIN_CODEBASE}:/var/www/html/admin
-#      - ./logs/admin:/var/log/nginx
-#    env_file:
-#      .env
-#    environment:
-#      - VIRTUAL_HOST=${ADMIN_DOMAIN}
-#    depends_on:
-#      - php
-#    networks:
-#      api_network:
-#        aliases:
-#          - ${ADMIN_DOMAIN}
+      - default
 
 #  # Uncomment this to create a Redis server for caching.
 #  # Redis cache server
@@ -145,7 +125,7 @@ services:
 #      - "6379:6379"
 #      - "8001:8001"
 #    networks:
-#      - api_network
+#      - default
 
 #  # Uncomment this to create a Memcached server for caching.
 #  # Memcached server
@@ -156,38 +136,43 @@ services:
 #      - "11211:11211"
 #    command: -m 64
 #    networks:
-#      - api_network
+#      - default
 
-#  # Uncomment this for compiling and serving the phpdoc API.
-#  # PhpDoc container.
-#  phpdocumentor:
-#    image: phpdoc/phpdoc:latest
-#    platform: linux/amd64
-#    container_name: "${APP_NAME}-phpdocumentor"
-#    volumes:
-#      - ${API_CODEBASE}:/data
-#    command:
-#      "run -d ./ -t ./public/phpdoc/ --title='PHPDoc'"
-#    networks:
-#      - api_network
-#
-#  # NGINX PHPDoc server.
-#  phpdoc:
-#    image: nginx:stable
-#    container_name: "${APP_NAME}-phpdoc"
-#    ports:
-#      - "80"
-#    volumes:
-#      - ${API_CODEBASE}/public/phpdoc:/var/www/html
-#      - ./config/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.docker.network=api_network"
-#      - "traefik.http.routers.nginx.rule=Host(`${PHPDOC_SUBDOMAIN}.${DOMAIN}`)"
-#      - "traefik.http.routers.nginx.tls=true"
-#    networks:
-#      - api_network
+  # Uncomment this for compiling and serving the phpdoc API.
+  # PhpDoc container.
+  phpdocumentor:
+    image: phpdoc/phpdoc:latest
+    platform: linux/amd64
+    container_name: "${APP_NAME}-phpdocumentor"
+    volumes:
+      - ${API_CODEBASE}:/data
+    command:
+      "run -d ./ -t ./public/phpdoc/ --title='PHPDoc'"
+    networks:
+      - default
+
+  # NGINX PHPDoc server.
+  phpdoc:
+    image: nginx:stable
+    container_name: "${APP_NAME}-phpdoc"
+    ports:
+      - "8083:80"
+    volumes:
+      - ${API_CODEBASE}/public/phpdoc:/var/www/html
+      - ./config/nginx/phpdoc.conf:/etc/nginx/conf.d/default.conf
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=apiopenstudio_docker_dev_api_network
+      - traefik.http.routers.nginx.rule=Host(`${PHPDOC_SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.nginx.tls=true
+    networks:
+      - default
+
+volumes:
+  dbdata:
 
 networks:
-  api_network:
+  default:
     driver: bridge
+
+
