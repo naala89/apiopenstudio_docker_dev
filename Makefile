@@ -87,10 +87,8 @@ build:
 
 .PHONY: certs
 certs:
-	mkcert -cert-file "$${DOMAIN}.crt" -key-file "$${DOMAIN}.key" "*.$${DOMAIN}"
-	mv "$${DOMAIN}.crt" config/certs/
-	mv "$${DOMAIN}.key" config/certs/
-	cp "$$(mkcert -CAROOT)/rootCA.pem" config/certs/ca.crt
+	mkcert "*.$${DOMAIN}" localhost 127.0.0.1 ::1
+	mv *.pem config/certs/
 
 .PHONY: proxy_config
 proxy_config:

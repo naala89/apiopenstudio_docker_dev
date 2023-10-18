@@ -58,7 +58,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/proxy/static.yml:/etc/traefik/traefik.yml:ro
       - ./config/proxy/dynamic.yml:/etc/traefik/dynamic.yml:ro
-      - ./config/certs:/etc/certs:ro
+      - ./config/certs/_wildcard.apiopenstudio.local+3.pem:/etc/certs/apiopenstudio.local.pem:ro
+      - ./config/certs/_wildcard.apiopenstudio.local+3-key.pem:/etc/certs/apiopenstudio.local-key.pem:ro
     networks:
       - default
 

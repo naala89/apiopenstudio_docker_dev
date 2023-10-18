@@ -11,5 +11,5 @@ http:
 
 tls:
   certificates:
-    - certFile: "/etc/certs/DOMAIN.crt"
-      keyFile: "/etc/certs/DOMAIN.key"
+    - certFile: "/etc/certs/DOMAIN.pem"
+      keyFile: "/etc/certs/DOMAIN-key.pem"
