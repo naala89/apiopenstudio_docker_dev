@@ -19,18 +19,17 @@ setup:
 	make proxy_config
 	make composer
 	make build
-	# if [ -d "$${ADMIN_CODEBASE}/node_modules" ]; then\
-	# 	rm -R "$${ADMIN_CODEBASE}/node_modules";\
-	# fi
-	# docker compose run admin
-	# make yarn install
-	# docker compose down
+	if [ -d "$${ADMIN_CODEBASE}/node_modules" ]; then\
+		rm -R "$${ADMIN_CODEBASE}/node_modules";\
+	fi
+	docker run -v "$${ADMIN_CODEBASE}:/app" "apiopenstudio_docker_dev-$${ADMIN_SUBDOMAIN}" yarn install
 
 ## up	: Build & spin up the docker containers.
 ##		Command: make up
 .PHONY: up
 up:
 	docker-compose up -d
+	make yarn serve
 
 ## down	: Stop and remove all containers.
 ##		Command: make down
