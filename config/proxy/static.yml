@@ -16,8 +16,11 @@ providers:
     watch: true
 
 log:
-  level: INFO
-  format: common
+  level: DEBUG
+  filePath: "/var/log/error.log"
+
+accessLog:
+  filePath: "/var/log/access.log"
 
 entryPoints:
   http:
