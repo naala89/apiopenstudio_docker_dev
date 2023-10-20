@@ -1,6 +1,11 @@
+# Dev env
 .idea/
 .env
-certs/
+dbdata/
 logs/*
 !logs/.gitkeep
-dbdata/
+
+# Config
+config/proxy/dynamic.yml
+config/certs/*
+!config/certs/.gitkeep
