@@ -22,7 +22,9 @@ setup:
 	if [ -d "$${ADMIN_CODEBASE}/node_modules" ]; then\
 		rm -R "$${ADMIN_CODEBASE}/node_modules";\
 	fi
-	docker run -v "$${ADMIN_CODEBASE}:/app" "apiopenstudio_docker_dev-$${ADMIN_SUBDOMAIN}" yarn install
+	docker run --rm -v "$${ADMIN_CODEBASE}:/app" "apiopenstudio_docker_dev-$${ADMIN_SUBDOMAIN}" yarn install
+	docker compose run --rm -it php ./bin/aos-install
+	docker compose down db
 
 ## up	: Build & spin up the docker containers.
 ##		Command: make up
@@ -80,15 +82,21 @@ composer:
 logs:
 	docker logs "$${APP_NAME}-$${MAKE_ARGS}"
 
+## build	: build all the images.
+##		Command: make build
 .PHONY: build
 build:
 	docker compose build
 
+## certs	: generate the SSL certificates.
+##		Command: make certs
 .PHONY: certs
 certs:
 	mkcert "*.$${DOMAIN}" localhost 127.0.0.1 ::1
 	mv *.pem config/certs/
 
+## proxy_config	: generate the dynamic.yml file for Traefik
+##		Command: make proxy_config
 .PHONY: proxy_config
 proxy_config:
 	cp config/proxy/dynamic.tpl config/proxy/dynamic.yml

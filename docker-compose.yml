@@ -33,6 +33,7 @@ services:
       - ${API_CODEBASE}:/var/www/html:rw
     depends_on:
       - php
+      - db
     labels:
       - traefik.enable=true
       - traefik.docker.network=apiopenstudio_docker_dev_default
