@@ -1,0 +1,10 @@
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+tls:
+  certificates:
+    - certFile: /etc/certs/apiopenstudio.pem
+      keyFile: /etc/certs/apiopenstudio-key.pem

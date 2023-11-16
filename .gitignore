@@ -6,6 +6,5 @@ logs/*
 !logs/.gitkeep
 
 # Config
-config/proxy/dynamic.yml
 config/certs/*
 !config/certs/.gitkeep
