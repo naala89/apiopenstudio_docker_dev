@@ -16,12 +16,8 @@ help : Makefile
 .PHONY: setup
 setup:
 	make certs
-	make proxy_config
 	make composer
 	make build
-	if [ -d "$${ADMIN_CODEBASE}/node_modules" ]; then\
-		rm -R "$${ADMIN_CODEBASE}/node_modules";\
-	fi
 	docker run --rm -v "$${ADMIN_CODEBASE}:/app" "apiopenstudio_docker_dev-$${ADMIN_SUBDOMAIN}" yarn install
 	docker compose run --rm -it php ./bin/aos-install
 	docker compose down db
@@ -30,20 +26,26 @@ setup:
 ##		Command: make up
 .PHONY: up
 up:
-	docker-compose up -d
+	if [ -d "./logs/apiopenstudio" ]; then\
+		rm -R "./logs/apiopenstudio";\
+	fi
+	if [ -d "./logs/traefik" ]; then\
+		rm -R "./logs/traefik";\
+	fi
+	docker compose up -d
 	make yarn serve
 
 ## down	: Stop and remove all containers.
 ##		Command: make down
 .PHONY: down
 down:
-	docker-compose down
+	docker compose down
 
-## stop	: Stop all containers.
+## stop	: Stop all containers, but do not delete them.
 ##		Command: make stop
 .PHONY: stop
 stop:
-	docker-compose stop
+	docker compose stop
 
 ## yarn: Run a yarn command in the admin container.
 ##		Command: make yarn install
@@ -56,6 +58,10 @@ stop:
 ##		Command: make yarn coverage
 .PHONY: yarn
 yarn:
+
+	if [[ $${MAKE_ARGS} = "install" && -d "$${ADMIN_CODEBASE}/node_modules" ]]; then\
+		rm -R "$${ADMIN_CODEBASE}/node_modules";\
+	fi
 	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn $${MAKE_ARGS}
 
 ## composer: Refresh the composer dependencies.
@@ -92,17 +98,8 @@ build:
 ##		Command: make certs
 .PHONY: certs
 certs:
-	mkcert "*.$${DOMAIN}" localhost 127.0.0.1 ::1
+	mkcert "$${API_SUBDOMAIN}.$${DOMAIN}" "$${ADMIN_SUBDOMAIN}.$${DOMAIN}" "*.$${DOMAIN}" localhost 127.0.0.1 ::1
 	mv *.pem config/certs/
-
-## proxy_config	: generate the dynamic.yml file for Traefik
-##		Command: make proxy_config
-.PHONY: proxy_config
-proxy_config:
-	cp config/proxy/dynamic.tpl config/proxy/dynamic.yml
-	sed -i -e "s/PROXY_DOMAIN/$${PROXY_SUBDOMAIN}.$${DOMAIN}/g" config/proxy/dynamic.yml
-	sed -i -e "s/DOMAIN/$${DOMAIN}/g" config/proxy/dynamic.yml
-	rm config/proxy/dynamic.yml-e
 
 # https://stackoverflow.com/a/6273809/1826109
 %:

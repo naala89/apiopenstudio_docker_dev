@@ -48,7 +48,7 @@ Update `/etc/hosts` to contain the following values:
     127.0.0.1       localhost
 
 
-## Setup SSL certs, DB and all dependencies
+## Set up the DB and all dependencies
 
     cd apiopenstudio_docker_dev
     make setup
@@ -85,24 +85,10 @@ for the initial database setup:
 
 # URLs
 
-## Admin
-
-* [https://admin.apiopenstudio.local](https://admin.apiopenstudio.local) (Traefik proxy)
-* [http://localhost:8081/](http://localhost:8081/) (direct to the container)
-
-## Api
-
-* [https://api.apiopenstudio.local](https://api.apiopenstudio.local) (Traefik proxy)
-* [http://localhost:8082/](http://localhost:8082/) (direct to the container)
-
-## PHPDoc
-
-* [https://phpdoc.apiopenstudio.local](https://phpdoc.apiopenstudio.local) (Traefik proxy)
-* [http://localhost:8082/](http://localhost:8082/) (direct to the container)
-
-## Traefik dashboard
-
-* [http://traefik.apiopenstudio.local:8080/dashboard/#/](http://traefik.apiopenstudio.local:8080/dashboard/#/) (Traefik proxy)
+* [Admin][local_admin]
+* [API][local_api]
+* [Traefik][local_traefik]
+* [PHPDoc][local_phpdoc]
 
 # Logs
 
@@ -190,5 +176,8 @@ In `docker-compose.yml` file:
   * Build all containers.
 * `make certs`
   * Generate the SSL certificates for the proxy entrypoint.
-* `make proxy_config`
-  * Generate the `dynamic.yml` file for Traefik.
+
+[local_traefik]: https://admin.apiopenstudio.local:8080
+[local_api]: https://api.apiopenstudio.local
+[local_phpdoc]: https://phpdoc.apiopenstudio.local
+[local_admin]: https://admin.apiopenstudio.local
