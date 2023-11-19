@@ -15,6 +15,16 @@ The containers are completely encapsulated, which means you will not need to ins
 is set up to the latest PHP version (currently 8.2). See the FAQ to run
 ApiOpenStudio on a different version.
 
+# Dependencies
+
+## Git
+
+See GitHub's guide for installing Git: [Install Git][install_git]
+
+## Mkcert
+
+See the github home page for installing mkcert: [FiloSottile/mkcert][mkcert]
+
 # Setup
 
 ## Clone the code bases
@@ -34,7 +44,7 @@ ApiOpenStudio on a different version.
     cd apiopenstudio_docker_dev
     cp example.env .env
 
-Update the values for `API_CODEBASE` and `ADMIN_CODEBASE` in `.env` so that
+**Important:** Update the values for `API_CODEBASE` and `ADMIN_CODEBASE` in `.env` so that
 they point to your repository clones.
 
 ## Configure the `hosts` file
@@ -46,7 +56,6 @@ Update `/etc/hosts` to contain the following values:
     127.0.0.1       phpdoc.apiopenstudio.local
     127.0.0.1       traefik.apiopenstudio.local
     127.0.0.1       localhost
-
 
 ## Set up the DB and all dependencies
 
@@ -181,3 +190,6 @@ In `docker-compose.yml` file:
 [local_api]: https://api.apiopenstudio.local
 [local_phpdoc]: https://phpdoc.apiopenstudio.local
 [local_admin]: https://admin.apiopenstudio.local
+[mkcert]: https://github.com/FiloSottile/mkcert
+[install_git]: https://github.com/git-guides/install-git
+
