@@ -19,21 +19,25 @@ setup:
 	make composer
 	make build
 	docker run --rm -v "$${ADMIN_CODEBASE}:/app" "apiopenstudio_docker_dev-$${ADMIN_SUBDOMAIN}" yarn install
+#	docker compose run -d db
+#	while [ "`docker inspect -f {{.State.Health.Status}} db`" != "healthy" ]; do sleep 2; done
+#	docker compose run --rm -it php ./bin/aos-install
+#	docker compose down db
+
+## init: Initialise the DB
+##		Command: make setup
+.PHONY: init
+init:
 	docker compose run --rm -it php ./bin/aos-install
-	docker compose down db
 
 ## up	: Build & spin up the docker containers.
 ##		Command: make up
 .PHONY: up
 up:
-	if [ -d "./logs/apiopenstudio" ]; then\
-		rm -R "./logs/apiopenstudio";\
-	fi
-	if [ -d "./logs/traefik" ]; then\
-		rm -R "./logs/traefik";\
-	fi
+	if [ -d "./logs/apiopenstudio" ]; then rm -R "./logs/apiopenstudio"; fi
+	if [ -d "./logs/traefik" ]; then rm -R "./logs/traefik"; fi
 	docker compose up -d
-	make yarn serve
+#	make yarn serve
 
 ## down	: Stop and remove all containers.
 ##		Command: make down
@@ -68,12 +72,8 @@ yarn:
 ##		Command: make composer
 .PHONY: composer
 composer:
-	if [ -f "$${API_CODEBASE}/composer.lock" ]; then\
-		rm "$${API_CODEBASE}/composer.lock";\
-	fi
-	if [ -d "$${API_CODEBASE}/vendor" ]; then\
-		rm -R "$${API_CODEBASE}/vendor";\
-	fi
+	if [ -f "$${API_CODEBASE}/composer.lock" ]; then rm "$${API_CODEBASE}/composer.lock"; fi
+	if [ -d "$${API_CODEBASE}/vendor" ]; then rm -R "$${API_CODEBASE}/vendor"; fi
 	docker compose run --rm composer
 
 ## logs	: View the logs in a docker container.

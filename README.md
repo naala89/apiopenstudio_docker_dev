@@ -60,6 +60,7 @@ Update `/etc/hosts` to contain the following values:
 ## Set up the DB and all dependencies
 
     cd /my/development/directory/apiopenstudio_docker_dev
+    docker volume create apiopenstudio_docker_dev_db
     make setup
 
 In the final step of the setup, you will be asked to answer several questions
