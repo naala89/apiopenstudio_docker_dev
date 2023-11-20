@@ -50,9 +50,6 @@ services:
       - traefik.docker.network=apiopenstudio_docker_dev_default
       - traefik.http.routers.admin.rule=Host(`${ADMIN_SUBDOMAIN}.${DOMAIN}`)
       - traefik.http.routers.admin.tls=true
-#      - traefik.http.routers.admin.tls.certresolver=myresolver
-#      - traefik.http.services.admin.loadbalancer.server.port=8081
-#      - traefik.webservice.admin.entryPoints=http,https,ws,wss
     ports:
       - "8081:8081"
     volumes:
@@ -76,10 +73,6 @@ services:
       - traefik.docker.network=apiopenstudio_docker_dev_default
       - traefik.http.routers.api.rule=Host(`${API_SUBDOMAIN}.${DOMAIN}`)
       - traefik.http.routers.api.tls=true
-#      - traefik.http.routers.api.tls.certresolver=myresolver
-#      - traefik.http.middlewares.cors.headers.customResponseHeaders.Access-Control-Allow-Origin=*
-#      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,DELETE,PUSH,POST
-#      - traefik.http.routers.api.middlewares=cors
     networks:
       - default
 
