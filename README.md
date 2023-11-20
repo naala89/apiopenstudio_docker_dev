@@ -57,15 +57,22 @@ Update `/etc/hosts` to contain the following values:
     127.0.0.1       traefik.apiopenstudio.local
     127.0.0.1       localhost
 
-## Set up the DB and all dependencies
+## Install all the dependencies and SSL certificates
 
     cd /my/development/directory/apiopenstudio_docker_dev
     make setup
 
-In the final step of the setup, you will be asked to answer several questions
-for the initial database setup:
+## Initialise the database
 
-    Continuing will create a new database and erase the current database, if it exists, continue [Y/n]:
+    cd /my/development/directory/apiopenstudio_docker_dev
+    make up
+    make init
+    make down
+
+You will be asked to answer several questions for the initial database setup:
+
+    Continuing will create a new database and erase the current database, if it
+    exists, continue [Y/n]:
     ...
 
     Include test users and accounts [y/N]:
@@ -76,24 +83,31 @@ for the initial database setup:
     Enter the admin users email:
     ...
 
-    Automatically generate public/private keys for JWT (WARNING: this will overwrite any existing keys at the location defined in settings.yml) [Y/n]:
+    Automatically generate public/private keys for JWT (WARNING: this will 
+    overwrite any existing keys at the location defined in settings.yml) [Y/n]:
     ...
 
     ApiOpenStudio is successfully installed!
-    You will now be able to configure and use the admin GUI and/or make REST calls to Api OpenStudio.
+    You will now be able to configure and use the admin GUI and/or make REST
+    calls to Api OpenStudio.
 
 # Running the docker
 
 A `Makefile` has been set up in `apiopenstudio_docker_dev` to make things easy.
 
-You can setup, spin up/down, read all logs with the `apiopenstudio_docker_dev` checkout.
+You can set up, spin up/down, read all logs with the
+`apiopenstudio_docker_dev` checkout.
 
-## Start
+## Spin up all the containers
 
     make up
 
-**Note:** `make up` will also run the admin node instance. Yarn will give you
-the URL's to access it directly. But you should use
+## Start the admin service
+
+    make yarn serve
+
+**Note:** Yarn will give you the URL's to access it directly in the CLI.
+But you should use
 [https://admin.apiopenstudio.local](https://admin.apiopenstudio.local)
 
 ## Stop
@@ -126,15 +140,15 @@ this docker directory:
 ## Will I lose any data when I stop or delete the containers?
 
 No. The database is stored in a docker volume:
-`apiopenstudio_docker_dev_dbdata`. This will persist, unless you expressly
+`apiopenstudio_docker_dev_db`. This will persist, unless you expressly
 delete the volume or re-run `make setup`.
 
 ## I get `Your Composer dependencies require a PHP version ">= 8.2.0".`
 
-This usually occurs when you are running when the `composer` image is a mismatch
-for the PHP version you are using.
+This usually occurs when you are running when the `composer` image is a
+mismatch for the PHP version you are using.
 
-After updating the `.env` and `docker-compose.yml` files, run:
+After updating the `.env` and `docker-compose.yml` files, and then run:
 
     make composer
 
@@ -149,6 +163,10 @@ In `docker-compose.yml` file:
     composer:
         image: composer:2.1.11
 
+Run:
+
+    make composer
+
 ### PHP 8.1
 
 In `.env`:
@@ -159,6 +177,10 @@ In `docker-compose.yml` file:
 
     composer:
         image: composer:latest
+
+Run:
+
+    make composer
 
 ### PHP 8.2
 
@@ -171,12 +193,18 @@ In `docker-compose.yml` file:
     composer:
         image: composer:latest
 
+Run:
+
+    make composer
+
 ## What are all the `Makefile` commands?
 
 * `make help`
   * List all `make` commands.
 * `make setup`
-  * install and configure all requirements, based on the `.env` files.
+  * Install the certificates, install all dependencies and build the docker images
+* `make init`
+  * Initialise the database.
 * `make up`
   * Spin up the docker containers for ApiOpenStudio.
 * `make down`
