@@ -36,12 +36,12 @@ See the github home page for installing mkcert: [FiloSottile/mkcert][mkcert]
 
 ## Configure ApiOpenStudio core
 
-    cd apiopenstudio
+    cd /my/development/directory/apiopenstudio
     cp example.docker-dev.settings.yml settings.yml
 
 ## Configure Traefik
 
-    cd apiopenstudio_docker_dev
+    cd /my/development/directory/apiopenstudio_docker_dev
     cp example.env .env
 
 **Important:** Update the values for `API_CODEBASE` and `ADMIN_CODEBASE` in `.env` so that
@@ -59,7 +59,7 @@ Update `/etc/hosts` to contain the following values:
 
 ## Set up the DB and all dependencies
 
-    cd apiopenstudio_docker_dev
+    cd /my/development/directory/apiopenstudio_docker_dev
     make setup
 
 In the final step of the setup, you will be asked to answer several questions
@@ -84,9 +84,17 @@ for the initial database setup:
 
 # Running the docker
 
+A `Makefile` has been set up in `apiopenstudio_docker_dev` to make things easy.
+
+You can setup, spin up/down, read all logs with the `apiopenstudio_docker_dev` checkout.
+
 ## Start
 
     make up
+
+**Note:** `make up` will also run the admin node instance. Yarn will give you
+the URL's to access it directly. But you should use
+[https://admin.apiopenstudio.local](https://admin.apiopenstudio.local)
 
 ## Stop
 
@@ -104,12 +112,14 @@ for the initial database setup:
 The API, admin and php containers are configured to display the server logs in
 this docker directory:
 
-    logs/apiopenstudio/
-        db.log
-        api.log
-    logs/traefik/
-        error.log
-        access.log
+    apiopenstudio_docker_dev/
+    ├─ logs/
+    │  ├─ apiopenstudio/
+    │  │  ├─ db.log
+    │  │  ├─ api.log
+    │  ├─ traefik/
+    │  │  ├─ error.log
+    │  │  ├─ access.log
 
 # FAQ
 
