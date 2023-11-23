@@ -32,3 +32,4 @@ v1.0.1
 
 - Implemented Traefik
 - Added makefile for ease of use
+- Updated for use on Linux and Windows
