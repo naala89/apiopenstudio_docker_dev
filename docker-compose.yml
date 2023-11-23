@@ -12,7 +12,7 @@ services:
   # Reverse Proxy
   traefik:
     image: "traefik:${TRAEFIK_VERSION}"
-    container_name: "${APP_NAME}-traefik"
+    container_name: "${APP_NAME}-${PROXY_SUBDOMAIN}"
     command:
       - --log.level=DEBUG
       - --log.filePath=/var/log/error.log
@@ -41,7 +41,7 @@ services:
 
   # Node Admin
   admin:
-    container_name: "${APP_NAME}-admin"
+    container_name: "${APP_NAME}-${ADMIN_SUBDOMAIN}"
     build:
       context: .
       dockerfile: "config/docker/Dockerfile-node"
@@ -60,7 +60,7 @@ services:
   # NGINX API server
   api:
     image: nginx:stable
-    container_name: "${APP_NAME}-api"
+    container_name: "${APP_NAME}-${API_SUBDOMAIN}"
     ports:
       - "8082:80"
     volumes:
@@ -170,7 +170,7 @@ services:
 #  # NGINX PHPDoc server.
 #  phpdoc:
 #    image: nginx:stable
-#    container_name: "${APP_NAME}-phpdoc"
+#    container_name: "${APP_NAME}-${PHPDOC_SUBDOMAIN}"
 #    ports:
 #      - "8083:80"
 #    volumes:
