@@ -1,6 +1,7 @@
 # Dev env
 .idea/
 .env
+env.bat
 dbdata/
 logs/*
 !logs/.gitkeep

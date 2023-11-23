@@ -11,7 +11,7 @@ rem @link      https://www.apiopenstudio.com
 rem General
 set APP_NAME=apiopenstudio
 set DOMAIN=apiopenstudio.local
-set SSL_CERT_DIR=./config/certs
+set SSL_CERT_DIR=.\config\certs
 set PHP_VERSION=8.2
 set TRAEFIK_VERSION=2.10
 
