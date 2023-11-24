@@ -343,7 +343,8 @@ By default, caching is set to off. To turn it on:
 
 * Stop the containers: `make down`
 * Uncomment the `redis` blocks in your `docker-compose.yml`
-* Update `/my/development/directory/apiopenstudio_docker_dev/.env`:
+* Update `/my/development/directory/apiopenstudio_docker_dev/.env` (Windows
+  update `env.bat`):
 
 ```dotenv
 WITH_MEMCACHED=false
@@ -370,7 +371,8 @@ cache:
 
 * Stop the containers: `make down`
 * Uncomment the `redis` blocks in your `docker-compose.yml`
-* Update `/my/development/directory/apiopenstudio_docker_dev/.env`:
+* Update `/my/development/directory/apiopenstudio_docker_dev/.env` (Windows
+update `env.bat`):
 
 ```dotenv
 WITH_MEMCACHED=true
