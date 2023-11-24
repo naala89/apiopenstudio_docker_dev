@@ -63,6 +63,12 @@ yarn:
 	fi
 	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn $${MAKE_ARGS}
 
+## flush-redis: Flush all Redis cache.
+##		Command: make flush-redis
+.PHONY: flush-redis
+flush-redis:
+	docker exec -i "$${APP_NAME}-redis" redis-cli FLUSHALL
+
 ## composer: Refresh the composer dependencies.
 ##		Command: make composer
 .PHONY: composer
