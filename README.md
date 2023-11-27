@@ -1,3 +1,6 @@
+![APIOpenStudio_Logo_Name_Colour.png](img%2FAPIOpenStudio_Logo_Name_Colour.png)
+![01-primary-blue-docker-logo.png](img%2F01-primary-blue-docker-logo.png)
+
 Docker Dev setup for ApiOpenStudio
 ==================================
 
@@ -11,6 +14,12 @@ The containers are completely encapsulated, which means you will not need to ins
 `composer`, `node` or `vue` on the host machine. By default, the configuration
 is set up to the latest PHP version (currently 8.2). See the FAQ to run
 ApiOpenStudio on a different version.
+
+API and admin requests can be made over HTTP or HTTP, although HTTP is
+redirected to HTTPS.
+
+You can access the Traefik (proxy) dashboard on
+`http://traefik.apiopenstudio.local:8080`.
 
 # Dependencies
 
@@ -214,7 +223,132 @@ apiopenstudio_docker_dev/
 │  │  ├─ access.log
 ```
 
+## Docker Container Architecture
+
+![docker_dev architecture.jpg](img%2Fdocker_dev%20architecture.jpg)
+
+The architecture can be split into 3 main regions:
+
+* api (yellow)
+* admin (blue)
+* phpdoc (red)
+
+As you can see from the dotted connection lines, some containers are optional.
+In fact, it is quite possible to run ApiOpenStudio in **headless** mode in
+`apiopenstudio_docker_dev` without the admin container running.
+
+### Required
+
+* Containers
+  * traefik
+  * api
+  * php
+  * composer
+  * db
+* Docker Volumes
+  * db
+* Codebase
+  * apiopenstudio
+  * apiopenstudio_admin_vue
+
+### Temporary service containers
+
+* composer
+* phpdocumentor
+
+### Optional containers
+
+* redis
+* memcached
+* phpdoc
+* phpdocumentor
+* admin
+
 # FAQ
+
+## Can I bypass Traefik and call the containers directly?
+
+Yes, the internal network has not been hidden, so you call them directly:
+
+* API: http://<container.ip>:80
+* Admin: http://<container.ip>:8081
+* PHPDoc: http://<container.ip>:80
+
+## How do I make an API using PostMan?
+
+### login
+
+* Method: POST
+* URL: https://api.apiopenstudio.local/apiopenstudio/core/auth/token
+* Auth: No Auth
+* Params: < none >
+* Headers:
+  * Accept: application/json
+* Body (x-www-form-urlencoded):
+  * username: <username>
+  * passowrd: <password>
+
+### Get applications
+
+* Method: GET
+* URL: https://api.apiopenstudio.local/apiopenstudio/core/application
+* Auth: Bearer Token
+  * Bearer < token >
+* Params: < none >
+* Headers:
+  * Accept: application/json
+* Body: < none >
+
+## How do I connect a DB with a client?
+
+Create a profile in your favourite DB client using the following settings:
+
+* Host: 127.0.0.1
+* Port: 3306
+* User: apiopenstudio
+* Password: apiopenstudio
+
+## How do make a CLI command to the DB?
+
+You can do this from with the `php` and `db` containers.
+
+### php
+
+```bash
+docker exec -it apiopenstudio-php bash
+mysql -h db -u apiopenstudio -p
+```
+
+Follow the prompt to enter the password
+
+```sql
+use apiopenstudio;
+```
+
+### db
+
+```bash
+docker exec -it apiopenstudio-db bash
+mariadb -h 127.0.0.1 -u apiopenstudio -p
+```
+
+Follow the prompt to enter the password
+
+```sql
+use apiopenstudio;
+```
+
+## How do I ssh into the containers?
+
+```bash
+docker exec -it <container_name> bash
+```
+
+example:
+
+```bash
+docker exec -it apiopenstudio-api bash
+```
 
 ## Will I lose any data when I stop or delete the containers?
 
