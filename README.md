@@ -242,13 +242,21 @@ The reports are in:
 apiopenstudio_admin_vue/
 ├─ tests/
 │  ├─ reports/
-│  │  ├─ ...
+│  │  ├─coverage/
+│  │  │  ├─index.html
+│  │  ├─component-test-results.html
+│  │  ├─component-test-results.json
+│  │  ├─lint-test-results.html
+│  │  ├─lint-test-results.xml
+│  │  ├─unit-test-results.html
+│  │  ├─unit-test-results.xml
+
 ```
 
 ### Run linting tests only
 
 ```bash
-docker exec -t "apiopenstudio-admin" yarn ci:lint
+make test-fe-lint
 ```
 
 The reports are in:
@@ -264,7 +272,7 @@ apiopenstudio_admin_vue/
 ### Run unit tests only
 
 ```bash
-docker exec -t "apiopenstudio-admin" yarn ci:unit
+make test-fe-unit
 ```
 
 The reports are in:
@@ -280,7 +288,7 @@ apiopenstudio_admin_vue/
 ### Run component tests only
 
 ```bash
-source .env && docker run --rm -w /app -v "${ADMIN_CODEBASE}:/app" "${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --component --config-file cypress.config.js"
+make test-fe-component
 ```
 
 The reports are in:
@@ -298,7 +306,7 @@ apiopenstudio_admin_vue/
 **Note:** These are currently not working
 
 ```bash
-source .env && docker run --rm -w /app -v "${ADMIN_CODEBASE}:/app" "${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+make test-fe-e2e
 ```
 
 The reports are in:
@@ -316,7 +324,7 @@ apiopenstudio_admin_vue/
 **Note:** These are currently not working
 
 ```bash
-source .env && docker run --rm -w /app -v "${ADMIN_CODEBASE}:/app" "${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+make test-fe-coverage
 ```
 
 The report is in:
