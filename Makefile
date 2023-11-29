@@ -46,6 +46,46 @@ down:
 stop:
 	docker compose stop
 
+## test-fe	: Run all frontend tests
+##		Command: make test-fe
+.PHONY: test-fe
+test-fe:
+	make test-fe-lint
+	make test-fe-unit
+	make test-fe-component
+	# make test-fe-e2e
+	make test-fe-coverage
+
+## test-fe-lint	: Run frontend lint tests
+##		Command: make test-fe-lint
+.PHONY: test-fe-lint
+test-fe-lint:
+	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn ci:lint
+
+## test-fe-unit	: Run frontend unit tests
+##		Command: make test-fe-unit
+.PHONY: test-fe-unit
+test-fe-unit:
+	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn ci:unit
+
+## test-fe-component	: Run frontend component tests
+##		Command: make test-fe-component
+.PHONY: test-fe-component
+test-fe-component:
+	docker run --rm -w /app -v "$${ADMIN_CODEBASE}:/app" "$${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --component --config-file cypress.config.js"
+
+## test-fe-e2e	: Run frontend e2e tests
+##		Command: make test-fe-e2e
+.PHONY: test-fe-e2e
+test-fe-e2e:
+	docker run --rm -w /app -v "$${ADMIN_CODEBASE}:/app" "$${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+
+## test-fe-coverage	: Run frontend coverage tests
+##		Command: make test-fe-coverage
+.PHONY: test-fe-coverage
+test-fe-coverage:
+	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" bash -c "vitest run --coverage -c vitest.config.ci.js"
+
 ## yarn: Run a yarn command in the admin container.
 ##		Command: make yarn install
 ##		Command: make yarn up
@@ -57,7 +97,6 @@ stop:
 ##		Command: make yarn coverage
 .PHONY: yarn
 yarn:
-
 	if [[ $${MAKE_ARGS} = "install" && -d "$${ADMIN_CODEBASE}/node_modules" ]]; then\
 		rm -R "$${ADMIN_CODEBASE}/node_modules";\
 	fi
