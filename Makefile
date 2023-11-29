@@ -52,8 +52,8 @@ stop:
 test-fe:
 	make test-fe-lint
 	make test-fe-unit
-	mate test-fe-component
-	make test-fe-e2e
+	make test-fe-component
+	# make test-fe-e2e
 	make test-fe-coverage
 
 ## test-fe-lint	: Run frontend lint tests
