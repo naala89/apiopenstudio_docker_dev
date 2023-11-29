@@ -46,6 +46,16 @@ down:
 stop:
 	docker compose stop
 
+## test-fe	: Run all frontend tests
+##		Command: make test-fe
+.PHONY: test-fe
+test-fe:
+	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn ci:lint
+	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn ci:unit
+	docker run --rm -w /app -v "$${ADMIN_CODEBASE}:/app" "$${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --component --config-file cypress.config.js"
+	# docker run --rm -w /app -v "$${ADMIN_CODEBASE}:/app" "$${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+	docker exec -t apiopenstudio-admin bash -c "vitest run --coverage -c vitest.config.ci.js"
+
 ## yarn: Run a yarn command in the admin container.
 ##		Command: make yarn install
 ##		Command: make yarn up
@@ -57,7 +67,6 @@ stop:
 ##		Command: make yarn coverage
 .PHONY: yarn
 yarn:
-
 	if [[ $${MAKE_ARGS} = "install" && -d "$${ADMIN_CODEBASE}/node_modules" ]]; then\
 		rm -R "$${ADMIN_CODEBASE}/node_modules";\
 	fi

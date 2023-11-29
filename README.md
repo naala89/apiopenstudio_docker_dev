@@ -21,28 +21,35 @@ redirected to HTTPS.
 You can access the Traefik (proxy) dashboard on
 `http://traefik.apiopenstudio.local:8080`.
 
-# Dependencies
+Dependencies
+============
 
-## Git
+Git
+---
 
 See GitHub's guide for installing Git: [Install Git][install_git]
 
-## Docker
+Docker
+------
 
 See [Get Docker](https://docs.docker.com/get-docker/)
 
-## Mkcert
+Mkcert
+------
 
 See the github home page for installing mkcert: [FiloSottile/mkcert][mkcert]
 
-## Make (Windows only)
+Make (Windows only)
+-------------------
 
 ```bash
 choco install make
 ```
-# Setup
+Setup
+=====
 
-## Clone the code bases
+Clone the code bases
+--------------------
 
 ```bash
 cd /my/development/directory
@@ -51,14 +58,16 @@ git clone git@gitlab.com:apiopenstudio/apiopenstudio_admin_vue.git
 git clone git@gitlab.com:apiopenstudio/apiopenstudio_docker_dev.git
 ```
 
-## Configure ApiOpenStudio core
+Configure ApiOpenStudio core
+----------------------------
 
 ```bash
 cd /my/development/directory/apiopenstudio
 cp example.docker-dev.settings.yml settings.yml
 ```
 
-## Configure Traefik
+Configure Traefik
+-----------------
 
 ### Mac & Linux
 
@@ -113,7 +122,8 @@ them beforehand, so that you can import and revert to the previous state.
 cd C:\my\development\directory\apiopenstudio_docker_dev
 ```
 
-## Configure the `hosts` file
+Configure the `hosts` file
+--------------------------
 
 Update `/etc/hosts` (in Windows: `C:\Windows\System32\drivers\etc\hosts`) to
 contain the following values:
@@ -126,14 +136,16 @@ contain the following values:
 127.0.0.1       localhost
 ```
 
-## Install all the dependencies and SSL certificates
+Install all the dependencies and SSL certificates
+-------------------------------------------------
 
 ```bash
 cd /my/development/directory/apiopenstudio_docker_dev
 make setup
 ```
 
-## Initialise the database
+Initialise the database
+-----------------------
 
 ```bash
 cd /my/development/directory/apiopenstudio_docker_dev
@@ -171,20 +183,23 @@ Spin down the4 containers:
 make down
 ```
 
-# Running the docker
+Running the docker
+==================
 
 A `Makefile` has been set up in `apiopenstudio_docker_dev` to make things easy.
 
 You can set up, spin up/down, read all logs with the
 `apiopenstudio_docker_dev` checkout.
 
-## Spin up all the containers
+Spin up all the containers
+--------------------------
 
 ```bash
 make up
 ```
 
-## Start the admin service
+Start the admin service
+-----------------------
 
 ```bash
 make yarn serve
@@ -194,20 +209,136 @@ make yarn serve
 But you should use
 [https://admin.apiopenstudio.local](https://admin.apiopenstudio.local)
 
-## Stop
+Stop
+----
 
 ```bash
 make down
 ```
 
-# URLs
+Running tests
+=============
+
+apiopenstudio_admin_vue
+-----------------------
+
+If the docker is not already run:
+
+```bash
+make up
+```
+
+### Run all tests
+
+Run:
+
+```bash
+make test-fe
+```
+
+The reports are in:
+
+```txt
+apiopenstudio_admin_vue/
+├─ tests/
+│  ├─ reports/
+│  │  ├─ ...
+```
+
+### Run linting tests only
+
+```bash
+docker exec -t "apiopenstudio-admin" yarn ci:lint
+```
+
+The reports are in:
+
+```txt
+apiopenstudio_admin_vue/
+├─ tests/
+│  ├─ reports/
+│  │  ├─ lint-test-results.html
+│  │  ├─ lint-test-results.xml
+```
+
+### Run unit tests only
+
+```bash
+docker exec -t "apiopenstudio-admin" yarn ci:unit
+```
+
+The reports are in:
+
+```txt
+apiopenstudio_admin_vue/
+├─ tests/
+│  ├─ reports/
+│  │  ├─ unit-test-results.html
+│  │  ├─ unit-test-results.xml
+```
+
+### Run component tests only
+
+```bash
+source .env && docker run --rm -w /app -v "${ADMIN_CODEBASE}:/app" "${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --component --config-file cypress.config.js"
+```
+
+The reports are in:
+
+```txt
+apiopenstudio_admin_vue/
+├─ tests/
+│  ├─ reports/
+│  │  ├─ component-test-results.html
+│  │  ├─ component-test-results.json
+```
+
+### Run e2e tests only
+
+**Note:** These are currently not working
+
+```bash
+source .env && docker run --rm -w /app -v "${ADMIN_CODEBASE}:/app" "${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+```
+
+The reports are in:
+
+```txt
+apiopenstudio_admin_vue/
+├─ tests/
+│  ├─ reports/
+│  │  ├─ e2e-test-results.html
+│  │  ├─ e2e-test-results.json
+```
+
+### Run coverage tests only
+
+**Note:** These are currently not working
+
+```bash
+source .env && docker run --rm -w /app -v "${ADMIN_CODEBASE}:/app" "${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+```
+
+The report is in:
+
+```txt
+apiopenstudio_admin_vue/
+├─ tests/
+│  ├─ reports/
+│  │  ├─ coverage/
+│  │  │  ├─ index.html
+```
+
+URLs
+====
 
 * [Admin][local_admin]
 * [API][local_api]
 * [Traefik][local_traefik]
 * [PHPDoc][local_phpdoc]
 
-# Logs
+Logs
+====
 
 The API, admin and php containers are configured to display the server logs in
 this docker directory:
@@ -223,7 +354,8 @@ apiopenstudio_docker_dev/
 │  │  ├─ access.log
 ```
 
-## Docker Container Architecture
+Docker Container Architecture
+=============================
 
 ![docker_dev architecture.jpg](img%2Fdocker_dev%20architecture.jpg)
 
@@ -237,7 +369,8 @@ As you can see from the dotted connection lines, some containers are optional.
 In fact, it is quite possible to run ApiOpenStudio in **headless** mode in
 `apiopenstudio_docker_dev` without the admin container running.
 
-### Required
+Required
+--------
 
 * Containers
   * traefik
@@ -251,12 +384,14 @@ In fact, it is quite possible to run ApiOpenStudio in **headless** mode in
   * apiopenstudio
   * apiopenstudio_admin_vue
 
-### Temporary service containers
+Temporary service containers
+----------------------------
 
 * composer
 * phpdocumentor
 
-### Optional containers
+Optional containers
+-------------------
 
 * redis
 * memcached
@@ -264,9 +399,11 @@ In fact, it is quite possible to run ApiOpenStudio in **headless** mode in
 * phpdocumentor
 * admin
 
-# FAQ
+FAQ
+===
 
-## Can I bypass Traefik and call the containers directly?
+Can I bypass Traefik and call the containers directly?
+------------------------------------------------------
 
 Yes, the internal network has not been hidden, so you call them directly:
 
@@ -275,6 +412,7 @@ Yes, the internal network has not been hidden, so you call them directly:
 * PHPDoc: http://<container.ip>:80
 
 ## How do I make an API using PostMan?
+--------------------------------------
 
 ### login
 
@@ -299,7 +437,8 @@ Yes, the internal network has not been hidden, so you call them directly:
   * Accept: application/json
 * Body: < none >
 
-## How do I connect a DB with a client?
+* How do I connect a DB with a client?
+--------------------------------------
 
 Create a profile in your favourite DB client using the following settings:
 
@@ -308,7 +447,8 @@ Create a profile in your favourite DB client using the following settings:
 * User: apiopenstudio
 * Password: apiopenstudio
 
-## How do make a CLI command to the DB?
+How do make a CLI command to the DB?
+------------------------------------
 
 You can do this from with the `php` and `db` containers.
 
@@ -338,7 +478,8 @@ Follow the prompt to enter the password
 use apiopenstudio;
 ```
 
-## How do I ssh into the containers?
+How do I ssh into the containers?
+---------------------------------
 
 ```bash
 docker exec -it <container_name> bash
@@ -350,13 +491,15 @@ example:
 docker exec -it apiopenstudio-api bash
 ```
 
-## Will I lose any data when I stop or delete the containers?
+Will I lose any data when I stop or delete the containers?
+----------------------------------------------------------
 
 No. The database is stored in a docker volume:
 `apiopenstudio_docker_dev_db`. This will persist, unless you expressly
 delete the volume or re-run `make setup`.
 
-## I get `Access denied for user 'root'@'x.x.x.x' (using password: YES)`
+I get `Access denied for user 'root'@'x.x.x.x' (using password: YES)`
+---------------------------------------------------------------------
 
 Check that port 3306 is not being used by another application.
 
@@ -366,7 +509,8 @@ your host machine or another docker.
 You need to ensure that there are no other DB instances running on your host
 machine that are using port 3306. 
 
-## I get `Your Composer dependencies require a PHP version ">= 8.2.0".`
+I get `Your Composer dependencies require a PHP version ">= 8.2.0".`
+--------------------------------------------------------------------
 
 This usually occurs when you are running when the `composer` image is a
 mismatch for the PHP version you are using.
@@ -440,7 +584,8 @@ Run:
 make composer
 ```
 
-## What are all the `Makefile` commands?
+What are all the `Makefile` commands?
+-------------------------------------
 
 * `make help`
   * List all `make` commands.
@@ -469,7 +614,8 @@ make composer
 * `make certs`
   * Generate the SSL certificates for the proxy entrypoint.
 
-## How do I enable caching?
+How do I enable caching?
+------------------------
 
 By default, caching is set to off. To turn it on:
 
@@ -526,14 +672,16 @@ cache:
     weight: 1
 ```
 
-## How do I enable PHPDoc?
+How do I enable PHPDoc?
+-----------------------
 
 * Stop the containers: `make down`.
 * Uncomment the `phpdocumentor` and `phpdoc` blocks in your
 `docker-compose.yml`.
 * Start the containers: `make up`.
 
-## Make setup hangs during the yarn install phase in Windows
+Make setup hangs during the yarn install phase in Windows
+---------------------------------------------------------
 
 This is probably due to memory being too low. However, running the same step in the CLI usually works:
 
