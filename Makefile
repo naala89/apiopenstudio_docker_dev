@@ -11,6 +11,10 @@ $(eval $(MAKE_ARGS):;@:)
 help : Makefile
 	@sed -n 's/^##//p' $<
 
+#**********************************
+# Setup and initialisation commands
+#**********************************
+
 ## setup: Install the certificates, install all dependencies and build the docker images
 ##		Command: make setup
 .PHONY: setup
@@ -21,10 +25,14 @@ setup:
 	docker run --rm -v "$${ADMIN_CODEBASE}:/app" "apiopenstudio_docker_dev-$${ADMIN_SUBDOMAIN}" yarn install
 
 ## init: Initialise the DB
-##		Command: make setup
+##		Command: make init
 .PHONY: init
 init:
 	docker compose run --rm -it php ./bin/aos-install
+
+#**********************
+# Spin up/down commands
+#**********************
 
 ## up	: Build & spin up the docker containers.
 ##		Command: make up
@@ -46,6 +54,10 @@ down:
 stop:
 	docker compose stop
 
+#*****************
+# Testing commands
+#*****************
+
 ## test-fe	: Run all frontend tests
 ##		Command: make test-fe
 .PHONY: test-fe
@@ -53,48 +65,68 @@ test-fe:
 	make test-fe-lint
 	make test-fe-unit
 	make test-fe-component
-	# make test-fe-e2e
+	# make test-fe-e2e # NOT WORKING YET
 	make test-fe-coverage
 
-## test-fe-lint	: Run frontend lint tests
+## test-be	: Run all backend tests  (untested, undocumented and limited to PHP8.1 ATM)
+##		Command: make test-be
+.PHONY: test-be
+test-be:
+	make test-be-unit
+	make test-be-api
+
+## test-fe-lint	: Run frontend lint tests. Test results are in <apiopenstudio_admin_vue>/tests/reports/lint-test-results.{html,xml}
 ##		Command: make test-fe-lint
 .PHONY: test-fe-lint
 test-fe-lint:
 	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn ci:lint
 
-## test-fe-unit	: Run frontend unit tests
+## test-fe-unit	: Run frontend unit tests. Test results are in <apiopenstudio_admin_vue>/tests/reports/unit-test-results.{html,xml}
 ##		Command: make test-fe-unit
 .PHONY: test-fe-unit
 test-fe-unit:
 	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" yarn ci:unit
 
-## test-fe-component	: Run frontend component tests
+## test-fe-component	: Run frontend component tests. Test results are in <apiopenstudio_admin_vue>/tests/reports/component-test-results.{html,json}
 ##		Command: make test-fe-component
 .PHONY: test-fe-component
 test-fe-component:
-	docker run --rm -w /app -v "$${ADMIN_CODEBASE}:/app" "$${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --component --config-file cypress.config.js"
+	docker run --rm -it --name "$${APP_NAME}-cypress" -v "$${ADMIN_CODEBASE}:/component" -w /component --entrypoint=cypress $${CYPRESS_IMAGE} run --component --config-file cypress.config.js
 
-## test-fe-e2e	: Run frontend e2e tests
-##		Command: make test-fe-e2e
-.PHONY: test-fe-e2e
-test-fe-e2e:
-	docker run --rm -w /app -v "$${ADMIN_CODEBASE}:/app" "$${CYPRESS_IMAGE}" sh -c "yarn cypress install --force && yarn cypress run --e2e --config-file cypress.config.js --headless"
+# test-fe-e2e	: Run frontend e2e tests. Test results are in <apiopenstudio_admin_vue>/tests/reports/e2e-test-results.{html,json}. # NOT WORKING YET
+#		Command: make test-fe-e2e
+#.PHONY: test-fe-e2e
+#test-fe-e2e:
+#	docker run --rm -it --name "$${APP_NAME}-cypress" -v "$${ADMIN_CODEBASE}:/e2e" -w /e2e --entrypoint=cypress $${CYPRESS_IMAGE} run --e2e --config-file cypress.config.js
 
-## test-fe-coverage	: Run frontend coverage tests
+## test-fe-coverage	: Run frontend coverage tests. Test results are in <apiopenstudio_admin_vue>/tests/reports/coverage/index.html
 ##		Command: make test-fe-coverage
 .PHONY: test-fe-coverage
 test-fe-coverage:
 	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" bash -c "vitest run --coverage -c vitest.config.ci.js"
 
+## test-be-unit	: Run backend unit tests (untested, undocumented and limited to PHP8.1 ATM)
+##		Command: make test-be-unit
+.PHONY: test-be-unit
+test-be-unit:
+	docker container run --rm -v "$${API_CODEBASE}:/project" --user $(id -u):$(id -g) codeception/codeception:latest bootstrap
+	docker container run --rm -v "$${API_CODEBASE}:/project" --user $(id -u):$(id -g) codeception/codeception:latest --env ci unit
+
+## test-be-api	: Run backend api tests (untested, undocumented and limited to PHP8.1 ATM)
+##		Command: make test-be-api
+.PHONY: test-be-api
+test-be-api:
+	docker container run --rm -v "$${API_CODEBASE}:/project" --user $(id -u):$(id -g) codeception/codeception:latest bootstrap
+	docker container run --rm -v "$${API_CODEBASE}:/project" --user $(id -u):$(id -g) codeception/codeception:latest --env ci api
+
+#**********************
+# Utility task commands
+#**********************
+
 ## yarn: Run a yarn command in the admin container.
 ##		Command: make yarn install
 ##		Command: make yarn up
 ##		Command: make yarn down
-##		Command: make yarn lint
-##		Command: make yarn unit
-##		Command: make yarn component
-##		Command: make yarn e2e
-##		Command: make yarn coverage
 .PHONY: yarn
 yarn:
 	if [[ $${MAKE_ARGS} = "install" && -d "$${ADMIN_CODEBASE}/node_modules" ]]; then\

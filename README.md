@@ -177,7 +177,7 @@ You will now be able to configure and use the admin GUI and/or make REST
 calls to Api OpenStudio.
 ```
 
-Spin down the4 containers:
+**Important:** Spin down the containers before continuing:
 
 ```bash
 make down
@@ -209,8 +209,8 @@ make yarn serve
 But you should use
 [https://admin.apiopenstudio.local](https://admin.apiopenstudio.local)
 
-Stop
-----
+Spin down all the containers
+----------------------------
 
 ```bash
 make down
@@ -222,11 +222,8 @@ Running tests
 apiopenstudio_admin_vue
 -----------------------
 
-If the docker is not already run:
-
-```bash
-make up
-```
+**NOTE:** Before running any tests, ensure you have spun up the docker
+containers: `make up`.
 
 ### Run all tests
 
@@ -320,8 +317,6 @@ apiopenstudio_admin_vue/
 ```
 
 ### Run coverage tests only
-
-**Note:** These are currently not working
 
 ```bash
 make test-fe-coverage
@@ -700,7 +695,7 @@ This is probably due to memory being too low. However, running the same step in 
 docker run --rm -v "%ADMIN_CODEBASE%:/app" "apiopenstudio_docker_dev-%ADMIN_SUBDOMAIN%" yarn install
 ```
 
-[local_traefik]: https://admin.apiopenstudio.local:8080
+[local_traefik]: https://traefik.apiopenstudio.local:8080
 [local_api]: https://api.apiopenstudio.local
 [local_phpdoc]: https://phpdoc.apiopenstudio.local
 [local_admin]: https://admin.apiopenstudio.local
