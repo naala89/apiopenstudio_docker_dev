@@ -30,6 +30,8 @@ init:
 up:
 	if exist ".\logs\apiopenstudio" (rmdir /s/q ".\logs\apiopenstudio")
 	if exist ".\logs\traefik" (rmdir /s/q ".\logs\traefik")
+	if exist ".\logs\nginx" (rmdirexit
+	 /s/q ".\logs\nginx")
 	docker compose up -d
 
 ## down	: Stop and remove all containers.

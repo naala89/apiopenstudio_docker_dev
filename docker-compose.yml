@@ -66,6 +66,7 @@ services:
     volumes:
       - ./config/nginx/api.conf:/etc/nginx/conf.d/default.conf:ro
       - ${API_CODEBASE}:/var/www/html:rw
+      - ./logs/nginx/:/var/log/nginx/:rw
     depends_on:
       - php
     labels:
@@ -128,7 +129,7 @@ services:
       - db
     volumes:
       - ${API_CODEBASE}:/var/www/html:rw
-      - ./logs/apiopenstudio:/var/log/apiopenstudio:rw
+      - ./logs/apiopenstudio/:/var/log/apiopenstudio/:rw
     networks:
       - default
 
