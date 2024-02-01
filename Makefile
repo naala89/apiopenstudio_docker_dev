@@ -40,6 +40,7 @@ init:
 up:
 	if [ -d "./logs/apiopenstudio" ]; then rm -R "./logs/apiopenstudio"; fi
 	if [ -d "./logs/traefik" ]; then rm -R "./logs/traefik"; fi
+	if [ -d "./logs/nginx" ]; then rm -R "./logs/nginx"; fi
 	docker compose up -d
 
 ## down	: Stop and remove all containers.
