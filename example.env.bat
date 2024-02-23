@@ -39,3 +39,6 @@ set ADMIN_SUBDOMAIN=admin
 
 rem PHPDoc
 set PHPDOC_SUBDOMAIN=phpdoc
+
+rem Styleguide
+set STYLEGUIDE_SUBDOMAIN=styleguide

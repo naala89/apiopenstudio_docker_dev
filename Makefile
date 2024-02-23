@@ -55,6 +55,22 @@ down:
 stop:
 	docker compose stop
 
+#********************
+# Styleguide commands
+#********************
+
+## styleguide	: Start the styleguide
+##		Command: make styleguide
+.PHONY: styleguide
+styleguide:
+	docker exec -t "$${APP_NAME}-$${STYLEGUIDE_SUBDOMAIN}" yarn storybook
+
+## styleguide-build	: Build the styleguide
+##		Command: make styleguide-build
+.PHONY: styleguide-build
+styleguide-build:
+	docker exec -t "$${APP_NAME}-$${STYLEGUIDE_SUBDOMAIN}" yarn build-storybook
+
 #*****************
 # Testing commands
 #*****************
@@ -171,8 +187,11 @@ build:
 ##		Command: make certs
 .PHONY: certs
 certs:
-	mkcert "$${API_SUBDOMAIN}.$${DOMAIN}" "$${ADMIN_SUBDOMAIN}.$${DOMAIN}" "*.$${DOMAIN}" localhost 127.0.0.1 ::1
-	mv *.pem config/certs/
+	if [ -f ./config/certs/*key.pem ]; then rm ./config/certs/*key.pem; fi
+	if [ -f ./config/certs/*.pem ]; then rm ./config/certs/*.pem; fi
+	mkcert "$${STYLEGUIDE_SUBDOMAIN}.$${DOMAIN}" "$${API_SUBDOMAIN}.$${DOMAIN}" "$${ADMIN_SUBDOMAIN}.$${DOMAIN}" "*.$${DOMAIN}" localhost 127.0.0.1 ::1
+	mv ./*key.pem ./config/certs/apiopenstudio.local-key.pem
+	mv ./*.pem ./config/certs/apiopenstudio.local.pem
 
 # https://stackoverflow.com/a/6273809/1826109
 %:
