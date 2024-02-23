@@ -8,6 +8,10 @@ $(eval $(MAKE_ARGS):;@:)
 help : Makefile
 	@sed -n 's/^##//p' $<
 
+#**********************************
+# Setup and initialisation commands
+#**********************************
+
 ## setup: Install the certificates, install all dependencies and build the docker images
 ##		Command: make setup
 .PHONY: setup
@@ -16,7 +20,7 @@ setup:
 	make composer
 	make build
 	if exist "%ADMIN_CODEBASE%\node_modules" (rmdir /s/q "%ADMIN_CODEBASE%\node_modules")
-	docker run --rm -v "%ADMIN_CODEBASE%:/app" "apiopenstudio_docker_dev-%ADMIN_SUBDOMAIN%" yarn install
+	docker run --rm -v "%ADMIN_CODEBASE%":/app "apiopenstudio_docker_dev-%ADMIN_SUBDOMAIN%" yarn install
 
 ## init: Initialise the DB
 ##		Command: make setup
@@ -24,14 +28,17 @@ setup:
 init:
 	docker exec -it "%APP_NAME%-php" php ./bin/aos-install
 
+#**********************
+# Spin up/down commands
+#**********************
+
 ## up	: Build & spin up the docker containers.
 ##		Command: make up
 .PHONY: up
 up:
 	if exist ".\logs\apiopenstudio" (rmdir /s/q ".\logs\apiopenstudio")
 	if exist ".\logs\traefik" (rmdir /s/q ".\logs\traefik")
-	if exist ".\logs\nginx" (rmdirexit
-	 /s/q ".\logs\nginx")
+	if exist ".\logs\nginx" (rmdir /s/q ".\logs\nginx")
 	docker compose up -d
 
 ## down	: Stop and remove all containers.
@@ -45,6 +52,26 @@ down:
 .PHONY: stop
 stop:
 	docker compose stop
+
+#********************
+# Styleguide commands
+#********************
+
+## styleguide	: Start the styleguide
+##		Command: make styleguide
+.PHONY: styleguide
+styleguide:
+	docker exec -t "%APP_NAME%-%STYLEGUIDE_SUBDOMAIN%" yarn storybook
+
+## styleguide-build	: Build the styleguide
+##		Command: make styleguide-build
+.PHONY: styleguide-build
+styleguide-build:
+	docker exec -t "%APP_NAME%-%STYLEGUIDE_SUBDOMAIN%" yarn build-storybook
+
+#*****************
+# Testing commands
+#*****************
 
 ## test-fe	: Run all frontend tests
 ##		Command: make test-fe
@@ -85,6 +112,10 @@ test-fe-e2e:
 .PHONY: test-fe-coverage
 test-fe-coverage:
 	docker exec -t "%APP_NAME%-%ADMIN_SUBDOMAIN%" bash -c "vitest run --coverage -c vitest.config.ci.js"
+
+#**********************
+# Utility task commands
+#**********************
 
 ## yarn: Run a yarn command in the admin container.
 ##		Command: make yarn install
@@ -130,7 +161,8 @@ build:
 ##		Command: make certs
 .PHONY: certs
 certs:
-	mkcert "%API_SUBDOMAIN%.%DOMAIN%" "%ADMIN_SUBDOMAIN%.%DOMAIN%" "*.%DOMAIN%" localhost 127.0.0.1 ::1
+	if exist ".\config\certs\*.pem" (rm /s/q ".\config\certs\*key.pem")
+	mkcert "%STYLEGUIDE_SUBDOMAIN%.%DOMAIN%" "%API_SUBDOMAIN%.%DOMAIN%" "%ADMIN_SUBDOMAIN%.%DOMAIN%" "*.%DOMAIN%" localhost 127.0.0.1 ::1
 	move .\*.pem %SSL_CERT_DIR%
 
 # https://stackoverflow.com/a/6273809/1826109

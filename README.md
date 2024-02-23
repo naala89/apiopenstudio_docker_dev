@@ -66,6 +66,13 @@ cd /my/development/directory/apiopenstudio
 cp example.docker-dev.settings.yml settings.yml
 ```
 
+### Windows
+
+```bash
+cd /my/development/directory/apiopenstudio
+copy example.docker-dev.settings.yml settings.yml
+```
+
 Configure Traefik
 -----------------
 
@@ -88,6 +95,13 @@ copy Makefile.windows Makefile
 ```
 
 Setup the environment variables
+
+```bash
+copy example.env .env
+```
+
+Update the values for `API_CODEBASE` and `ADMIN_CODEBASE` in `env.bat` so that
+they point to your repository clones.
 
 ```bash
 copy example.env.bat env.bat
@@ -132,6 +146,7 @@ contain the following values:
 127.0.0.1       admin.apiopenstudio.local
 127.0.0.1       api.apiopenstudio.local
 127.0.0.1       phpdoc.apiopenstudio.local
+127.0.0.1       styleguide.apiopenstudio.local
 127.0.0.1       traefik.apiopenstudio.local
 127.0.0.1       localhost
 ```
