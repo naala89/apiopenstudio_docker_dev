@@ -120,7 +120,7 @@ test-fe-component:
 ##		Command: make test-fe-coverage
 .PHONY: test-fe-coverage
 test-fe-coverage:
-	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" bash -c "vitest run --coverage -c vitest.config.ci.js"
+	docker exec -t "$${APP_NAME}-$${ADMIN_SUBDOMAIN}" bash -c "vitest run --coverage -c vitest.config.ci.mjs"
 
 ## test-be-unit	: Run backend unit tests (untested, undocumented and limited to PHP8.1 ATM)
 ##		Command: make test-be-unit
