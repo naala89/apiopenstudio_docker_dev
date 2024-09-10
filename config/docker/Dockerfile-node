@@ -1,0 +1,7 @@
+FROM node:16.19.1
+
+WORKDIR /app
+
+ENV PATH /app/node_modules/.bin:$PATH
+
+CMD [ "tail", "-f", "/dev/null" ]

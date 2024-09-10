@@ -1,6 +1,11 @@
+# Dev env
 .idea/
 .env
-certs/
+env.bat
+dbdata/
 logs/*
 !logs/.gitkeep
-dbdata/
+
+# Config
+config/certs/*
+!config/certs/.gitkeep
